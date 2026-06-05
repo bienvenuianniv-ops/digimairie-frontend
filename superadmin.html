@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Super Admin — DigiMairie</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --vert:#1a6b3c;--vert-mid:#238a4e;--vert-clair:#d6f0e0;
+  --or:#e8a020;--or-clair:#fef3d0;
+  --noir:#0d1f14;--sable:#f7f2ea;--blanc:#fff;--gris:#6b7280;--gris-clair:#f3f4f6;
+  --rouge:#c0392b;--vert-ok:#16a34a;--bleu:#3b82f6;--texte:#1a2e1e;
+  --radius:14px;--shadow:0 4px 20px rgba(0,0,0,.08);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--sable);color:var(--texte);min-height:100vh}
+
+header{background:linear-gradient(135deg,var(--noir) 0%,#1a3d24 100%);padding:0 2rem;height:70px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 16px rgba(0,0,0,.2);position:sticky;top:0;z-index:100}
+.logo{display:flex;align-items:center;gap:12px}
+.logo-mark{width:42px;height:42px;background:var(--or);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.4rem}
+.logo h1{font-family:'Fraunces',serif;font-size:1.2rem;color:#fff;line-height:1.1}
+.logo p{font-size:.68rem;color:rgba(255,255,255,.6);letter-spacing:.06em;text-transform:uppercase}
+.btn-logout{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;padding:.5rem 1rem;border-radius:8px;font-size:.82rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s}
+.btn-logout:hover{background:rgba(255,255,255,.2)}
+
+main{max-width:1100px;margin:0 auto;padding:2rem 1.5rem}
+
+.page-title{font-family:'Fraunces',serif;font-size:1.8rem;margin-bottom:.4rem}
+.page-sub{color:var(--gris);font-size:.9rem;margin-bottom:2rem}
+
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;margin-bottom:2rem}
+@media(max-width:680px){.stats{grid-template-columns:1fr}}
+.stat-card{background:#fff;border-radius:var(--radius);padding:1.5rem;box-shadow:var(--shadow);border-left:4px solid transparent;position:relative;overflow:hidden}
+.stat-card.green{border-color:var(--vert-ok)}
+.stat-card.gold{border-color:var(--or)}
+.stat-card.blue{border-color:var(--bleu)}
+.stat-icon{font-size:2rem;margin-bottom:.5rem}
+.stat-v{font-family:'Fraunces',serif;font-size:2.6rem;font-weight:900;line-height:1}
+.stat-l{font-size:.85rem;color:var(--gris);margin-top:.4rem}
+
+.card{background:#fff;border-radius:var(--radius);padding:1.5rem;box-shadow:var(--shadow)}
+.card-title{font-family:'Fraunces',serif;font-size:1.2rem;margin-bottom:1.2rem;display:flex;align-items:center;gap:.5rem}
+
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:.7rem;font-weight:700;color:var(--gris);text-transform:uppercase;letter-spacing:.05em;padding:.7rem 1rem;background:var(--gris-clair);border-bottom:2px solid #e5e7eb}
+th:first-child{border-radius:8px 0 0 0}th:last-child{border-radius:0 8px 0 0}
+td{padding:.9rem 1rem;border-bottom:1px solid #f3f4f6;font-size:.85rem;vertical-align:middle}
+tr:hover td{background:#fafdf9}
+.mairie-cell{display:flex;align-items:center;gap:.7rem}
+.mairie-logo{width:38px;height:38px;border-radius:9px;background:var(--vert-clair);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+.mairie-info strong{display:block;font-weight:700}
+.mairie-info span{font-size:.72rem;color:var(--gris)}
+.badge{display:inline-block;padding:.2rem .65rem;border-radius:999px;font-size:.72rem;font-weight:700}
+.b-green{background:#d1fae5;color:#065f46}.b-red{background:#fee2e2;color:#991b1b}.b-blue{background:#dbeafe;color:#1e40af}
+.rdv-count{font-family:'Fraunces',serif;font-weight:900;font-size:1.1rem;color:var(--vert)}
+.url-link{color:var(--bleu);text-decoration:none;font-size:.78rem;font-family:monospace}
+.url-link:hover{text-decoration:underline}
+
+.btn{padding:.4rem .9rem;border-radius:8px;border:none;cursor:pointer;font-family:inherit;font-size:.78rem;font-weight:700;transition:all .2s}
+.btn-toggle-on{background:#fee2e2;color:#991b1b}
+.btn-toggle-off{background:#dcfce7;color:#166534}
+.btn-toggle-on:hover,.btn-toggle-off:hover{transform:translateY(-1px);box-shadow:0 2px 8px rgba(0,0,0,.15)}
+
+/* LOGIN OVERLAY */
+.login-overlay{position:fixed;inset:0;background:linear-gradient(135deg,var(--noir) 0%,#1a3d24 100%);z-index:300;display:flex;align-items:center;justify-content:center;padding:1rem}
+.login-box{background:#fff;border-radius:20px;padding:2.5rem;max-width:400px;width:100%;box-shadow:0 24px 64px rgba(0,0,0,.3);text-align:center}
+.login-box .logo-mark{margin:0 auto 1rem}
+.login-box h2{font-family:'Fraunces',serif;font-size:1.5rem;margin-bottom:.5rem}
+.login-box p{color:var(--gris);font-size:.85rem;margin-bottom:1.5rem}
+.login-box input{width:100%;padding:.8rem 1rem;border:1.5px solid #d1d5db;border-radius:10px;font-size:.9rem;font-family:inherit;margin-bottom:1rem}
+.login-box input:focus{outline:none;border-color:var(--vert);box-shadow:0 0 0 3px rgba(26,107,60,.1)}
+.login-box button{width:100%;padding:.8rem;background:var(--vert);color:#fff;border:none;border-radius:10px;font-size:.92rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s}
+.login-box button:hover{background:var(--vert-mid)}
+.login-error{color:var(--rouge);font-size:.82rem;margin-bottom:1rem;display:none}
+
+.empty{text-align:center;padding:3rem;color:var(--gris)}
+.empty .ei{font-size:3rem;margin-bottom:.7rem}
+.loading{text-align:center;padding:3rem;color:var(--gris)}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-overlay" id="login-overlay">
+  <div class="login-box">
+    <div class="logo-mark">🔐</div>
+    <h2>Super Admin</h2>
+    <p>Tableau de bord propriétaire DigiMairie</p>
+    <div class="login-error" id="login-error">❌ Mot de passe incorrect</div>
+    <input type="password" id="superadmin-pwd" placeholder="Mot de passe super admin" onkeypress="if(event.key==='Enter')verifierAcces()">
+    <button onclick="verifierAcces()">Accéder au tableau de bord</button>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" style="display:none">
+  <header>
+    <div class="logo">
+      <div class="logo-mark">📊</div>
+      <div>
+        <h1>DigiMairie — Super Admin</h1>
+        <p>Gestion commerciale</p>
+      </div>
+    </div>
+    <button class="btn-logout" onclick="deconnexion()">⬅️ Déconnexion</button>
+  </header>
+
+  <main>
+    <h2 class="page-title">Tableau de bord commercial</h2>
+    <p class="page-sub">Vue d'ensemble de toutes les mairies clientes de DigiMairie.</p>
+
+    <div class="stats">
+      <div class="stat-card green">
+        <div class="stat-icon">🏛️</div>
+        <div class="stat-v" id="stat-mairies">0</div>
+        <div class="stat-l">Mairies inscrites</div>
+      </div>
+      <div class="stat-card gold">
+        <div class="stat-icon">✅</div>
+        <div class="stat-v" id="stat-actives">0</div>
+        <div class="stat-l">Mairies actives</div>
+      </div>
+      <div class="stat-card blue">
+        <div class="stat-icon">📅</div>
+        <div class="stat-v" id="stat-rdv">0</div>
+        <div class="stat-l">RDV générés (total)</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🏛️ Mairies clientes</div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr>
+              <th>Mairie</th>
+              <th>Pays</th>
+              <th>URL</th>
+              <th>RDV</th>
+              <th>Inscrite le</th>
+              <th>Statut</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="mairies-body">
+            <tr><td colspan="7"><div class="loading">⏳ Chargement...</div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+const API_URL = 'https://mairie-rdv-backend.onrender.com/api';
+
+// Mot de passe super admin (à changer selon votre choix)
+const SUPER_ADMIN_PWD = 'digimairie-boss-2026';
+
+const apiCall = async (endpoint, method = 'GET', body = null) => {
+  const headers = { 'Content-Type': 'application/json' };
+  const options = { method, headers };
+  if (body) options.body = JSON.stringify(body);
+  const response = await fetch(`${API_URL}${endpoint}`, options);
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.message || 'Erreur serveur');
+  return data;
+};
+
+// Vérifier l'accès
+const verifierAcces = () => {
+  const pwd = document.getElementById('superadmin-pwd').value;
+  const errEl = document.getElementById('login-error');
+  if (pwd === SUPER_ADMIN_PWD) {
+    sessionStorage.setItem('superadmin', 'true');
+    document.getElementById('login-overlay').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    chargerDonnees();
+  } else {
+    errEl.style.display = 'block';
+  }
+};
+
+const deconnexion = () => {
+  sessionStorage.removeItem('superadmin');
+  location.reload();
+};
+
+// Vérifier si déjà connecté
+if (sessionStorage.getItem('superadmin') === 'true') {
+  document.getElementById('login-overlay').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'block';
+}
+
+const chargerDonnees = async () => {
+  const tbody = document.getElementById('mairies-body');
+  try {
+    const data = await apiCall('/mairies/admin/stats');
+
+    // Statistiques
+    document.getElementById('stat-mairies').textContent = data.stats.totalMairies;
+    document.getElementById('stat-actives').textContent = data.stats.mairiesActives;
+    document.getElementById('stat-rdv').textContent = data.stats.totalRdv;
+
+    // Liste des mairies
+    if (!data.mairies.length) {
+      tbody.innerHTML = `<tr><td colspan="7"><div class="empty"><div class="ei">🏛️</div>Aucune mairie inscrite pour le moment</div></td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = '';
+    data.mairies.forEach(m => {
+      const date = new Date(m.created_at).toLocaleDateString('fr-FR', { day:'numeric', month:'short', year:'numeric' });
+      const url = `digimairie.netlify.app/index.html?mairie=${m.slug}`;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>
+          <div class="mairie-cell">
+            <div class="mairie-logo">${m.logo || '🏛️'}</div>
+            <div class="mairie-info">
+              <strong>${m.nom}</strong>
+              <span>${m.email || 'Pas d\'email'}</span>
+            </div>
+          </div>
+        </td>
+        <td>${m.pays}</td>
+        <td><a href="https://${url}" target="_blank" class="url-link">${m.slug}</a></td>
+        <td><span class="rdv-count">${m.total_rdv}</span></td>
+        <td>${date}</td>
+        <td><span class="badge ${m.actif ? 'b-green' : 'b-red'}">${m.actif ? '✓ Active' : '✗ Inactive'}</span></td>
+        <td>
+          <button class="btn ${m.actif ? 'btn-toggle-on' : 'btn-toggle-off'}" onclick="toggleMairie(${m.id})">
+            ${m.actif ? '🔒 Désactiver' : '✅ Activer'}
+          </button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  } catch (err) {
+    tbody.innerHTML = `<tr><td colspan="7"><div class="empty">❌ ${err.message}</div></td></tr>`;
+  }
+};
+
+const toggleMairie = async (id) => {
+  if (!confirm('Voulez-vous modifier le statut de cette mairie ?')) return;
+  try {
+    await apiCall(`/mairies/${id}/toggle`, 'PUT');
+    chargerDonnees();
+  } catch (err) {
+    alert('❌ Erreur : ' + err.message);
+  }
+};
+
+// Charger si déjà connecté
+if (sessionStorage.getItem('superadmin') === 'true') {
+  chargerDonnees();
+}
+</script>
+</body>
+</html>
