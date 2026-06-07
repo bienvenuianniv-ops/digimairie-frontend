@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gestion des mariages — DigiMairie</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;0,900;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --vert:#1a6b3c;--vert-mid:#238a4e;--vert-clair:#d6f0e0;--vert-pale:#edf7f1;
+  --or:#e8a020;--or-clair:#fef3d0;
+  --noir:#0d1f14;--sable:#f7f2ea;--blanc:#fff;--gris:#6b7280;--gris-clair:#f3f4f6;
+  --rouge:#c0392b;--vert-ok:#16a34a;--bleu:#3b82f6;--violet:#8b5cf6;--texte:#1a2e1e;
+  --radius:14px;--shadow:0 4px 24px rgba(0,0,0,.08);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--sable);color:var(--texte);min-height:100vh}
+
+header{background:linear-gradient(135deg,var(--noir),#1a3d24);padding:0 2rem;height:68px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 16px rgba(0,0,0,.2);position:sticky;top:0;z-index:100}
+.logo{display:flex;align-items:center;gap:12px}
+.logo-mark{width:40px;height:40px;background:var(--or);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem}
+.logo h1{font-family:'Fraunces',serif;font-size:1.15rem;color:#fff;line-height:1.1}
+.logo p{font-size:.66rem;color:rgba(255,255,255,.6);letter-spacing:.06em;text-transform:uppercase}
+.header-links{display:flex;gap:1rem;align-items:center}
+.header-links a{color:rgba(255,255,255,.8);text-decoration:none;font-size:.84rem;font-weight:600}
+.header-links a:hover{color:var(--or)}
+
+main{max-width:1100px;margin:0 auto;padding:2rem 1.5rem}
+.page-title{font-family:'Fraunces',serif;font-size:1.7rem;margin-bottom:.3rem}
+.page-sub{color:var(--gris);font-size:.9rem;margin-bottom:2rem}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2rem}
+@media(max-width:680px){.stats{grid-template-columns:1fr 1fr}}
+.stat-card{background:#fff;border-radius:var(--radius);padding:1.2rem;box-shadow:var(--shadow);border-left:4px solid transparent}
+.stat-card.green{border-color:var(--vert-ok)}.stat-card.blue{border-color:var(--bleu)}.stat-card.violet{border-color:var(--violet)}.stat-card.gold{border-color:var(--or)}
+.stat-v{font-family:'Fraunces',serif;font-size:2rem;font-weight:900;line-height:1}
+.stat-l{font-size:.74rem;color:var(--gris);margin-top:.3rem}
+
+.toolbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.8rem;margin-bottom:1rem}
+.filter-bar{display:flex;gap:.45rem;flex-wrap:wrap}
+.f-btn{padding:.35rem .9rem;border-radius:999px;border:1.5px solid #d1d5db;background:#fff;font-size:.78rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}
+.f-btn.active{background:var(--vert);border-color:var(--vert);color:#fff}
+
+.card{background:#fff;border-radius:var(--radius);padding:1.3rem;box-shadow:var(--shadow)}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:.7rem;font-weight:700;color:var(--gris);text-transform:uppercase;letter-spacing:.05em;padding:.7rem 1rem;background:var(--gris-clair);border-bottom:2px solid #e5e7eb}
+th:first-child{border-radius:8px 0 0 0}th:last-child{border-radius:0 8px 0 0}
+td{padding:.85rem 1rem;border-bottom:1px solid #f3f4f6;font-size:.84rem;vertical-align:middle}
+tr:hover td{background:#fafdf9}
+.couple{font-weight:700}
+.couple small{display:block;font-weight:400;color:var(--gris);font-size:.72rem;margin-top:.15rem}
+.badge{display:inline-block;padding:.2rem .65rem;border-radius:999px;font-size:.7rem;font-weight:700}
+.type-celeb{background:#dbeafe;color:#1e40af}
+.type-const{background:#ede9fe;color:#6d28d9}
+.st-depose{background:#fef3c7;color:#92400e}
+.st-verif{background:#dbeafe;color:#1e40af}
+.st-bans{background:#e0e7ff;color:#3730a3}
+.st-prog{background:#d6f0e0;color:#065f46}
+.st-fini{background:#d1fae5;color:#065f46}
+.ref-code{background:var(--gris-clair);padding:.13rem .45rem;border-radius:5px;font-size:.74rem;font-family:monospace}
+
+.btn{padding:.4rem .85rem;border-radius:8px;border:none;cursor:pointer;font-family:inherit;font-size:.76rem;font-weight:700;transition:all .2s}
+.btn-voir{background:#fff;color:var(--texte);border:1.5px solid #d1d5db}
+.btn-voir:hover{border-color:var(--vert);color:var(--vert)}
+
+.empty{text-align:center;padding:3rem;color:var(--gris)}
+.empty .ei{font-size:3rem;margin-bottom:.7rem}
+.loading{text-align:center;padding:3rem;color:var(--gris)}
+
+/* Modal */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center;padding:1rem}
+.overlay.open{display:flex}
+.modal{background:#fff;border-radius:18px;padding:1.8rem;max-width:560px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.25)}
+.modal h3{font-family:'Fraunces',serif;font-size:1.3rem;margin-bottom:.3rem}
+.modal-ref{color:var(--gris);font-size:.82rem;margin-bottom:1.2rem}
+.detail-section{margin-bottom:1.2rem}
+.detail-section h4{font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;color:var(--vert);margin-bottom:.6rem;padding-bottom:.3rem;border-bottom:1px solid var(--vert-pale)}
+.d-row{display:flex;justify-content:space-between;padding:.3rem 0;font-size:.85rem;gap:1rem}
+.d-row span:first-child{color:var(--gris)}
+.d-row span:last-child{font-weight:600;text-align:right}
+.statut-actions{margin-top:1.3rem}
+.statut-actions label{font-size:.78rem;font-weight:700;display:block;margin-bottom:.5rem}
+.statut-actions select{width:100%;padding:.6rem .8rem;border:1.5px solid #d1d5db;border-radius:9px;font-family:inherit;font-size:.88rem;margin-bottom:.8rem}
+.m-actions{display:flex;justify-content:flex-end;gap:.7rem;margin-top:1rem}
+.btn-primary{background:var(--vert);color:#fff;padding:.6rem 1.4rem;border-radius:9px;border:none;font-weight:700;cursor:pointer;font-family:inherit;font-size:.85rem}
+.btn-secondary{background:#fff;color:var(--texte);border:1.5px solid #d1d5db;padding:.6rem 1.4rem;border-radius:9px;font-weight:700;cursor:pointer;font-family:inherit;font-size:.85rem}
+
+/* Login */
+.login-overlay{position:fixed;inset:0;background:linear-gradient(135deg,var(--noir),#1a3d24);z-index:300;display:flex;align-items:center;justify-content:center;padding:1rem}
+.login-box{background:#fff;border-radius:20px;padding:2.5rem;max-width:400px;width:100%;box-shadow:0 24px 64px rgba(0,0,0,.3);text-align:center}
+.login-box .logo-mark{margin:0 auto 1rem}
+.login-box h2{font-family:'Fraunces',serif;font-size:1.4rem;margin-bottom:.4rem}
+.login-box p{color:var(--gris);font-size:.85rem;margin-bottom:1.4rem}
+.login-box input{width:100%;padding:.75rem 1rem;border:1.5px solid #d1d5db;border-radius:10px;font-size:.9rem;font-family:inherit;margin-bottom:.9rem}
+.login-box button{width:100%;padding:.8rem;background:var(--vert);color:#fff;border:none;border-radius:10px;font-size:.92rem;font-weight:700;cursor:pointer;font-family:inherit}
+.login-error{color:var(--rouge);font-size:.82rem;margin-bottom:.9rem;display:none}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-overlay" id="login-overlay">
+  <div class="login-box">
+    <div class="logo-mark">🔐</div>
+    <h2>Connexion Agent</h2>
+    <p>Gestion des dossiers de mariage</p>
+    <div class="login-error" id="login-error">❌ Identifiants incorrects</div>
+    <input type="email" id="login-email" placeholder="Email" onkeypress="if(event.key==='Enter')document.getElementById('login-pwd').focus()">
+    <input type="password" id="login-pwd" placeholder="Mot de passe" onkeypress="if(event.key==='Enter')seConnecter()">
+    <button onclick="seConnecter()">Se connecter</button>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" style="display:none">
+  <header>
+    <div class="logo">
+      <div class="logo-mark">💍</div>
+      <div><h1>Gestion des mariages</h1><p>Espace agent</p></div>
+    </div>
+    <div class="header-links">
+      <a href="index.html">← Rendez-vous</a>
+      <a href="#" onclick="deconnexion();return false">Déconnexion</a>
+    </div>
+  </header>
+
+  <main>
+    <h2 class="page-title">Dossiers de mariage</h2>
+    <p class="page-sub">Consultez et gérez les dossiers déposés par les citoyens.</p>
+
+    <div class="stats">
+      <div class="stat-card gold"><div class="stat-v" id="s-total">0</div><div class="stat-l">Total dossiers</div></div>
+      <div class="stat-card blue"><div class="stat-v" id="s-celeb">0</div><div class="stat-l">🏛️ À célébrer</div></div>
+      <div class="stat-card violet"><div class="stat-v" id="s-const">0</div><div class="stat-l">📜 À constater</div></div>
+      <div class="stat-card green"><div class="stat-v" id="s-fini">0</div><div class="stat-l">Finalisés</div></div>
+    </div>
+
+    <div class="toolbar">
+      <div class="filter-bar">
+        <button class="f-btn active" onclick="filtrer('tous',this)">Tous</button>
+        <button class="f-btn" onclick="filtrer('celebration',this)">🏛️ Célébration</button>
+        <button class="f-btn" onclick="filtrer('constatation',this)">📜 Constatation</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr><th>Réf.</th><th>Couple</th><th>Type</th><th>Date</th><th>Statut</th><th>Action</th></tr>
+          </thead>
+          <tbody id="tbody">
+            <tr><td colspan="6"><div class="loading">⏳ Chargement...</div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- MODAL DÉTAIL -->
+<div class="overlay" id="overlay" onclick="if(event.target===this)fermerModal()">
+  <div class="modal" id="modal-content"></div>
+</div>
+
+<script>
+const API_URL = 'https://mairie-rdv-backend.onrender.com/api';
+let authToken = localStorage.getItem('token') || null;
+let tousMariages = [];
+let filtreActuel = 'tous';
+
+const apiCall = async (endpoint, method='GET', body=null, token=null) => {
+  const headers = {'Content-Type':'application/json'};
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+  const options = {method, headers};
+  if (body) options.body = JSON.stringify(body);
+  const response = await fetch(`${API_URL}${endpoint}`, options);
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.message || 'Erreur serveur');
+  return data;
+};
+
+// Connexion
+const seConnecter = async () => {
+  const email = document.getElementById('login-email').value.trim();
+  const pwd = document.getElementById('login-pwd').value.trim();
+  const errEl = document.getElementById('login-error');
+  if (!email || !pwd) { errEl.style.display='block'; errEl.textContent='❌ Remplissez tous les champs'; return; }
+  try {
+    const data = await apiCall('/auth/connecter', 'POST', { email, mot_de_passe: pwd });
+    authToken = data.token;
+    localStorage.setItem('token', data.token);
+    afficherDashboard();
+  } catch (err) {
+    errEl.style.display = 'block';
+    errEl.textContent = '❌ ' + err.message;
+  }
+};
+
+const deconnexion = () => {
+  authToken = null;
+  localStorage.removeItem('token');
+  location.reload();
+};
+
+const afficherDashboard = () => {
+  document.getElementById('login-overlay').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'block';
+  chargerMariages();
+};
+
+// Si déjà connecté
+if (authToken) afficherDashboard();
+
+const labelsStatut = {
+  'depose':'Déposé', 'verification':'En vérification', 'bans':'Bans publiés',
+  'programme':'Célébration programmée', 'celebre':'Célébré', 'constate':'Constaté'
+};
+const classeStatut = {
+  'depose':'st-depose','verification':'st-verif','bans':'st-bans',
+  'programme':'st-prog','celebre':'st-fini','constate':'st-fini'
+};
+
+const chargerMariages = async () => {
+  const tbody = document.getElementById('tbody');
+  try {
+    tousMariages = await apiCall('/mariages', 'GET', null, authToken);
+
+    // Stats
+    document.getElementById('s-total').textContent = tousMariages.length;
+    document.getElementById('s-celeb').textContent = tousMariages.filter(m => m.type_mariage==='celebration').length;
+    document.getElementById('s-const').textContent = tousMariages.filter(m => m.type_mariage==='constatation').length;
+    document.getElementById('s-fini').textContent = tousMariages.filter(m => m.statut==='celebre' || m.statut==='constate').length;
+
+    afficherTableau();
+  } catch (err) {
+    if (err.message.includes('oken')) {
+      authToken = null; localStorage.removeItem('token');
+      tbody.innerHTML = '<tr><td colspan="6"><div class="empty">🔐 Session expirée — rechargez la page</div></td></tr>';
+    } else {
+      tbody.innerHTML = `<tr><td colspan="6"><div class="empty">❌ ${err.message}</div></td></tr>`;
+    }
+  }
+};
+
+const afficherTableau = () => {
+  const tbody = document.getElementById('tbody');
+  let liste = [...tousMariages];
+  if (filtreActuel !== 'tous') liste = liste.filter(m => m.type_mariage === filtreActuel);
+
+  if (!liste.length) {
+    tbody.innerHTML = `<tr><td colspan="6"><div class="empty"><div class="ei">💍</div>Aucun dossier de mariage</div></td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = '';
+  liste.forEach(m => {
+    const dateAff = m.type_mariage === 'celebration'
+      ? (m.date_celebration ? new Date(m.date_celebration).toLocaleDateString('fr-FR') : '—')
+      : (m.date_religieuse ? new Date(m.date_religieuse).toLocaleDateString('fr-FR') : '—');
+    const typeBadge = m.type_mariage === 'celebration'
+      ? '<span class="badge type-celeb">🏛️ Célébration</span>'
+      : '<span class="badge type-const">📜 Constatation</span>';
+    const stClasse = classeStatut[m.statut] || 'st-depose';
+    const stLabel = labelsStatut[m.statut] || m.statut;
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><span class="ref-code">${m.reference}</span></td>
+      <td><div class="couple">${m.c1_prenom} ${m.c1_nom} <span style="color:var(--gris)">&amp;</span> ${m.c2_prenom} ${m.c2_nom}<small>📞 ${m.telephone || '—'}</small></div></td>
+      <td>${typeBadge}</td>
+      <td>${dateAff}</td>
+      <td><span class="badge ${stClasse}">${stLabel}</span></td>
+      <td><button class="btn btn-voir" onclick="voirDetail(${m.id})">Voir</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+};
+
+const filtrer = (type, btn) => {
+  filtreActuel = type;
+  document.querySelectorAll('.f-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  afficherTableau();
+};
+
+const voirDetail = (id) => {
+  const m = tousMariages.find(x => x.id === id);
+  if (!m) return;
+
+  const fmt = (d) => d ? new Date(d).toLocaleDateString('fr-FR') : '—';
+  const optionsStatut = m.type_mariage === 'celebration'
+    ? ['depose','verification','bans','programme','celebre']
+    : ['depose','verification','constate'];
+
+  const specifique = m.type_mariage === 'celebration'
+    ? `<div class="d-row"><span>Date de célébration souhaitée</span><span>${fmt(m.date_celebration)}</span></div>`
+    : `<div class="d-row"><span>Date du mariage religieux</span><span>${fmt(m.date_religieuse)}</span></div>
+       <div class="d-row"><span>Lieu (culte)</span><span>${m.lieu_culte || '—'}</span></div>`;
+
+  document.getElementById('modal-content').innerHTML = `
+    <h3>${m.type_mariage === 'celebration' ? '🏛️' : '📜'} Dossier de mariage</h3>
+    <div class="modal-ref">Référence : <strong>${m.reference}</strong></div>
+
+    <div class="detail-section">
+      <h4>Premier conjoint</h4>
+      <div class="d-row"><span>Nom complet</span><span>${m.c1_prenom} ${m.c1_nom}</span></div>
+      <div class="d-row"><span>Naissance</span><span>${fmt(m.c1_naissance)} ${m.c1_lieu_naissance ? '· '+m.c1_lieu_naissance : ''}</span></div>
+      <div class="d-row"><span>Profession</span><span>${m.c1_profession || '—'}</span></div>
+      <div class="d-row"><span>Domicile</span><span>${m.c1_domicile || '—'}</span></div>
+    </div>
+
+    <div class="detail-section">
+      <h4>Second conjoint</h4>
+      <div class="d-row"><span>Nom complet</span><span>${m.c2_prenom} ${m.c2_nom}</span></div>
+      <div class="d-row"><span>Naissance</span><span>${fmt(m.c2_naissance)} ${m.c2_lieu_naissance ? '· '+m.c2_lieu_naissance : ''}</span></div>
+      <div class="d-row"><span>Profession</span><span>${m.c2_profession || '—'}</span></div>
+      <div class="d-row"><span>Domicile</span><span>${m.c2_domicile || '—'}</span></div>
+    </div>
+
+    <div class="detail-section">
+      <h4>Mariage</h4>
+      <div class="d-row"><span>Régime matrimonial</span><span>${m.regime || '—'}</span></div>
+      ${specifique}
+    </div>
+
+    <div class="detail-section">
+      <h4>Témoins</h4>
+      <div class="d-row"><span>Témoins 1er conjoint</span><span>${m.temoin1_c1 || '—'} ${m.temoin2_c1 ? '· '+m.temoin2_c1 : ''}</span></div>
+      <div class="d-row"><span>Témoins 2nd conjoint</span><span>${m.temoin1_c2 || '—'} ${m.temoin2_c2 ? '· '+m.temoin2_c2 : ''}</span></div>
+    </div>
+
+    <div class="detail-section">
+      <h4>Contact</h4>
+      <div class="d-row"><span>Téléphone</span><span>${m.telephone || '—'}</span></div>
+      <div class="d-row"><span>Email</span><span>${m.email || '—'}</span></div>
+      ${m.notes ? `<div class="d-row"><span>Remarques</span><span>${m.notes}</span></div>` : ''}
+    </div>
+
+    <div class="statut-actions">
+      <label>Faire évoluer le statut du dossier</label>
+      <select id="select-statut">
+        ${optionsStatut.map(s => `<option value="${s}" ${m.statut===s?'selected':''}>${labelsStatut[s]}</option>`).join('')}
+      </select>
+    </div>
+
+    <div class="m-actions">
+      <button class="btn-secondary" onclick="fermerModal()">Fermer</button>
+      <button class="btn-primary" onclick="majStatut(${m.id})">✓ Enregistrer le statut</button>
+    </div>
+  `;
+  document.getElementById('overlay').classList.add('open');
+};
+
+const majStatut = async (id) => {
+  const statut = document.getElementById('select-statut').value;
+  try {
+    await apiCall(`/mariages/${id}/statut`, 'PUT', { statut }, authToken);
+    fermerModal();
+    chargerMariages();
+  } catch (err) {
+    alert('❌ Erreur : ' + err.message);
+  }
+};
+
+const fermerModal = () => document.getElementById('overlay').classList.remove('open');
+</script>
+</body>
+</html>
