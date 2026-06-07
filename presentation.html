@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DigiMairie — Solution pour les mairies africaines</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;0,900;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --vert:#1a6b3c;--vert-mid:#238a4e;--vert-clair:#d6f0e0;--vert-pale:#edf7f1;
+  --or:#e8a020;--or-clair:#fef3d0;
+  --noir:#0d1f14;--sable:#f7f2ea;--blanc:#fff;--gris:#6b7280;--gris-clair:#f3f4f6;
+  --texte:#1a2e1e;
+  --radius:16px;--shadow:0 4px 24px rgba(0,0,0,.08);--shadow-lg:0 20px 50px rgba(0,0,0,.12);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--sable);color:var(--texte);line-height:1.6;overflow-x:hidden}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;transition:all .3s}
+nav.scrolled{background:rgba(255,255,255,.95);backdrop-filter:blur(12px);box-shadow:0 2px 20px rgba(0,0,0,.08)}
+.nav-logo{display:flex;align-items:center;gap:.75rem;text-decoration:none}
+.nav-logo-mark{width:38px;height:38px;background:var(--or);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem}
+.nav-logo-text{font-family:'Fraunces',serif;font-size:1.2rem;color:var(--blanc);font-weight:700;transition:color .3s}
+nav.scrolled .nav-logo-text{color:var(--vert)}
+.nav-links{display:flex;align-items:center;gap:1.8rem}
+.nav-links a{color:rgba(255,255,255,.85);text-decoration:none;font-size:.88rem;font-weight:500;transition:all .2s}
+nav.scrolled .nav-links a{color:var(--gris)}
+.nav-links a:hover{color:var(--or)}
+.nav-cta{background:var(--or);color:var(--vert) !important;padding:.5rem 1.2rem;border-radius:8px;font-weight:700 !important}
+@media(max-width:720px){.nav-links a:not(.nav-cta){display:none}}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,var(--noir) 0%,#143a22 55%,#1a5e30 100%);padding:9rem 2rem 5rem;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-100px;right:-100px;width:400px;height:400px;background:radial-gradient(circle,rgba(232,160,32,.12),transparent 70%);border-radius:50%}
+.hero::after{content:'🏛️';position:absolute;bottom:-30px;right:5%;font-size:14rem;opacity:.05;line-height:1}
+.hero-inner{max-width:900px;margin:0 auto;position:relative;z-index:1;text-align:center}
+.hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(232,160,32,.15);border:1px solid rgba(232,160,32,.3);color:var(--or);font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:.4rem 1.1rem;border-radius:999px;margin-bottom:1.5rem}
+.hero h1{font-family:'Fraunces',serif;font-size:clamp(2rem,5.5vw,3.4rem);color:#fff;line-height:1.1;margin-bottom:1.3rem;letter-spacing:-.02em}
+.hero h1 .accent{color:var(--or);font-style:italic}
+.hero p{color:rgba(255,255,255,.78);font-size:clamp(1rem,2.2vw,1.2rem);max-width:620px;margin:0 auto 2.2rem;line-height:1.7}
+.hero-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+
+.btn{padding:.9rem 2rem;border-radius:11px;font-family:inherit;font-size:.95rem;font-weight:700;cursor:pointer;border:none;transition:all .25s;display:inline-flex;align-items:center;gap:.5rem;text-decoration:none}
+.btn-gold{background:var(--or);color:var(--noir)}
+.btn-gold:hover{background:#f5b133;transform:translateY(-2px);box-shadow:0 10px 30px rgba(232,160,32,.4)}
+.btn-ghost{background:rgba(255,255,255,.08);color:#fff;border:1.5px solid rgba(255,255,255,.25)}
+.btn-ghost:hover{background:rgba(255,255,255,.16);transform:translateY(-2px)}
+.btn-vert{background:var(--vert);color:#fff}
+.btn-vert:hover{background:var(--vert-mid);transform:translateY(-2px);box-shadow:0 10px 30px rgba(26,107,60,.3)}
+.btn-outline{background:transparent;color:var(--vert);border:1.5px solid var(--vert)}
+.btn-outline:hover{background:var(--vert);color:#fff}
+
+/* SECTIONS */
+section{padding:5rem 2rem}
+.container{max-width:1100px;margin:0 auto}
+.section-head{text-align:center;max-width:680px;margin:0 auto 3.5rem}
+.section-tag{display:inline-block;color:var(--or);font-size:.78rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.8rem}
+.section-head h2{font-family:'Fraunces',serif;font-size:clamp(1.6rem,4vw,2.4rem);line-height:1.15;margin-bottom:1rem;color:var(--noir)}
+.section-head p{color:var(--gris);font-size:1.02rem}
+
+/* PROBLÈME */
+.probleme{background:var(--blanc)}
+.prob-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+@media(max-width:780px){.prob-grid{grid-template-columns:1fr}}
+.prob-card{background:var(--sable);border-radius:var(--radius);padding:2rem 1.6rem;text-align:center;border-bottom:3px solid var(--or)}
+.prob-icon{font-size:2.6rem;margin-bottom:1rem}
+.prob-card h3{font-family:'Fraunces',serif;font-size:1.15rem;margin-bottom:.6rem}
+.prob-card p{color:var(--gris);font-size:.9rem}
+
+/* VALEUR / AVANTAGES */
+.valeur{background:var(--vert-pale)}
+.val-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.4rem}
+@media(max-width:780px){.val-grid{grid-template-columns:1fr}}
+.val-card{background:#fff;border-radius:var(--radius);padding:2rem;box-shadow:var(--shadow);display:flex;gap:1.3rem;align-items:flex-start;transition:transform .25s,box-shadow .25s}
+.val-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+.val-emoji{width:56px;height:56px;border-radius:14px;background:var(--vert-clair);display:flex;align-items:center;justify-content:center;font-size:1.7rem;flex-shrink:0}
+.val-card h3{font-family:'Fraunces',serif;font-size:1.2rem;margin-bottom:.5rem}
+.val-card p{color:var(--gris);font-size:.92rem}
+
+/* COMMENT */
+.comment{background:var(--blanc)}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem;counter-reset:step}
+@media(max-width:780px){.steps{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.steps{grid-template-columns:1fr}}
+.step{position:relative;padding:2rem 1.4rem;text-align:center;background:var(--sable);border-radius:var(--radius)}
+.step-num{width:44px;height:44px;border-radius:50%;background:var(--vert);color:#fff;font-family:'Fraunces',serif;font-weight:900;font-size:1.2rem;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem}
+.step h3{font-size:1rem;margin-bottom:.5rem}
+.step p{color:var(--gris);font-size:.85rem}
+
+/* TARIFS */
+.tarifs{background:linear-gradient(180deg,var(--vert-pale),var(--sable))}
+.plans{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;align-items:stretch}
+@media(max-width:880px){.plans{grid-template-columns:1fr;max-width:440px;margin:0 auto}}
+.plan{background:#fff;border-radius:20px;padding:2.2rem 1.8rem;box-shadow:var(--shadow);border:2px solid transparent;display:flex;flex-direction:column;transition:transform .25s,box-shadow .25s}
+.plan:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg)}
+.plan.featured{border-color:var(--or);position:relative}
+.plan.featured::before{content:'★ Le plus choisi';position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--or);color:var(--noir);font-size:.7rem;font-weight:700;letter-spacing:.05em;padding:.3rem 1rem;border-radius:999px;white-space:nowrap}
+.plan-name{font-family:'Fraunces',serif;font-size:1.4rem;color:var(--vert);margin-bottom:.3rem}
+.plan-target{font-size:.82rem;color:var(--gris);margin-bottom:1.4rem;min-height:2.4em}
+.plan-price{font-family:'Fraunces',serif;font-size:1.6rem;font-weight:700;color:var(--noir);padding-bottom:1.4rem;margin-bottom:1.4rem;border-bottom:1px solid var(--gris-clair)}
+.plan-price small{display:block;font-family:'Plus Jakarta Sans';font-size:.78rem;font-weight:400;color:var(--gris);margin-top:.3rem}
+.plan-features{list-style:none;flex:1;margin-bottom:1.6rem}
+.plan-features li{font-size:.88rem;padding:.5rem 0;padding-left:1.6rem;position:relative;color:var(--texte)}
+.plan-features li::before{content:'✓';position:absolute;left:0;color:var(--vert);font-weight:900}
+.plan-features li.off{color:#b8bcc2}
+.plan-features li.off::before{content:'–';color:#cfd3d8}
+
+/* CTA FINALE */
+.cta-final{background:linear-gradient(135deg,var(--noir),#1a5e30);text-align:center}
+.cta-final h2{font-family:'Fraunces',serif;font-size:clamp(1.7rem,4vw,2.6rem);color:#fff;margin-bottom:1rem}
+.cta-final p{color:rgba(255,255,255,.75);max-width:540px;margin:0 auto 2.2rem;font-size:1.05rem}
+.cta-final .btn-gold{font-size:1.05rem;padding:1rem 2.4rem}
+
+/* FOOTER */
+footer{background:var(--noir);color:rgba(255,255,255,.6);text-align:center;padding:2.5rem 2rem;font-size:.85rem}
+footer .foot-logo{font-family:'Fraunces',serif;font-size:1.1rem;color:#fff;margin-bottom:.5rem}
+footer a{color:var(--or);text-decoration:none}
+
+/* reveal */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
+.reveal.show{opacity:1;transform:none}
+</style>
+</head>
+<body>
+
+<nav id="navbar">
+  <a href="accueil.html" class="nav-logo">
+    <div class="nav-logo-mark">🏛️</div>
+    <span class="nav-logo-text">DigiMairie</span>
+  </a>
+  <div class="nav-links">
+    <a href="#avantages">Avantages</a>
+    <a href="#comment">Comment ça marche</a>
+    <a href="#tarifs">Formules</a>
+    <a href="inscription.html" class="nav-cta">Inscrire ma mairie</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">🌍 Conçu pour les mairies africaines</div>
+    <h1>Modernisez votre mairie,<br><span class="accent">au service du citoyen</span></h1>
+    <p>DigiMairie permet à votre mairie de gérer les rendez-vous citoyens en ligne. Fini les longues files d'attente : des démarches simples, rapides et modernes, pour vos administrés comme pour vos agents.</p>
+    <div class="hero-btns">
+      <a href="#tarifs" class="btn btn-gold">Découvrir les formules</a>
+      <a href="index.html?mairie=dakar" class="btn btn-ghost">▶ Voir une démo</a>
+    </div>
+  </div>
+</header>
+
+<!-- PROBLÈME -->
+<section class="probleme">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="section-tag">Le constat</span>
+      <h2>Les défis du quotidien dans nos mairies</h2>
+      <p>Chaque jour, citoyens et agents font face aux mêmes difficultés.</p>
+    </div>
+    <div class="prob-grid">
+      <div class="prob-card reveal">
+        <div class="prob-icon">⏳</div>
+        <h3>Files d'attente interminables</h3>
+        <p>Les citoyens passent des heures à attendre, parfois pour repartir sans avoir été servis.</p>
+      </div>
+      <div class="prob-card reveal">
+        <div class="prob-icon">📋</div>
+        <h3>Agents débordés</h3>
+        <p>La gestion manuelle des passages épuise les équipes et ralentit le service.</p>
+      </div>
+      <div class="prob-card reveal">
+        <div class="prob-icon">❓</div>
+        <h3>Manque de visibilité</h3>
+        <p>Aucun suivi clair des demandes, des créneaux, ni des statistiques d'activité.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AVANTAGES -->
+<section class="valeur" id="avantages">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="section-tag">La solution</span>
+      <h2>Ce que DigiMairie apporte à votre mairie</h2>
+      <p>Une plateforme simple qui transforme l'expérience citoyenne et le travail de vos agents.</p>
+    </div>
+    <div class="val-grid">
+      <div class="val-card reveal">
+        <div class="val-emoji">🚫</div>
+        <div><h3>Fini les files d'attente</h3><p>Les citoyens réservent leur créneau en ligne et se présentent à l'heure exacte. Plus de foule, plus d'attente inutile.</p></div>
+      </div>
+      <div class="val-card reveal">
+        <div class="val-emoji">⏱️</div>
+        <div><h3>Gain de temps pour les agents</h3><p>Le tableau de bord organise automatiquement les rendez-vous. Vos agents se concentrent sur l'essentiel : servir le citoyen.</p></div>
+      </div>
+      <div class="val-card reveal">
+        <div class="val-emoji">✨</div>
+        <div><h3>Une image moderne</h3><p>Offrez à votre commune une administration digitale, à la hauteur des attentes d'aujourd'hui. Une mairie qui inspire confiance.</p></div>
+      </div>
+      <div class="val-card reveal">
+        <div class="val-emoji">📊</div>
+        <div><h3>Pilotage et statistiques</h3><p>Suivez l'activité en temps réel : rendez-vous par service, taux de présence, export des données. Décidez avec des chiffres.</p></div>
+      </div>
+      <div class="val-card reveal">
+        <div class="val-emoji">📲</div>
+        <div><h3>Notifications email & SMS</h3><p>Confirmations et rappels automatiques. Le citoyen est prévenu, le taux d'absence diminue.</p></div>
+      </div>
+      <div class="val-card reveal">
+        <div class="val-emoji">🌍</div>
+        <div><h3>Adapté à notre réalité</h3><p>Support des langues locales, paiement au guichet ou mobile money, et une interface pensée pour le contexte africain.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMMENT -->
+<section class="comment" id="comment">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="section-tag">Simple et rapide</span>
+      <h2>Votre mairie en ligne en 4 étapes</h2>
+      <p>Pas besoin de compétences techniques. Nous nous occupons de tout.</p>
+    </div>
+    <div class="steps">
+      <div class="step reveal"><div class="step-num">1</div><h3>Inscription</h3><p>Vous nous contactez et nous créons l'espace de votre mairie.</p></div>
+      <div class="step reveal"><div class="step-num">2</div><h3>Personnalisation</h3><p>Nom, logo, couleurs, services et langue locale à vos couleurs.</p></div>
+      <div class="step reveal"><div class="step-num">3</div><h3>Mise en ligne</h3><p>Votre mairie reçoit son lien unique et ses accès agents.</p></div>
+      <div class="step reveal"><div class="step-num">4</div><h3>Vos citoyens réservent</h3><p>Les rendez-vous arrivent, vos agents les gèrent en un clic.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- TARIFS -->
+<section class="tarifs" id="tarifs">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="section-tag">Nos formules</span>
+      <h2>Une offre adaptée à chaque mairie</h2>
+      <p>De la petite commune à la grande ville, choisissez la formule qui vous correspond. Tarifs personnalisés selon vos besoins.</p>
+    </div>
+    <div class="plans">
+      <div class="plan reveal">
+        <div class="plan-name">Essentiel</div>
+        <div class="plan-target">Idéal pour les petites communes qui démarrent leur digitalisation.</div>
+        <div class="plan-price">Sur devis<small>Selon la taille de la commune</small></div>
+        <ul class="plan-features">
+          <li>Prise de rendez-vous en ligne</li>
+          <li>Tableau de bord agent</li>
+          <li>Notifications par email</li>
+          <li>Récépissé PDF pour le citoyen</li>
+          <li class="off">SMS automatiques</li>
+          <li class="off">Multi-agents & statistiques</li>
+          <li class="off">Langue locale</li>
+        </ul>
+        <a href="contact.html" class="btn btn-outline" style="width:100%;justify-content:center">Demander un devis</a>
+      </div>
+
+      <div class="plan featured reveal">
+        <div class="plan-name">Pro</div>
+        <div class="plan-target">Pour les mairies actives qui veulent un service complet.</div>
+        <div class="plan-price">Sur devis<small>La formule la plus complète</small></div>
+        <ul class="plan-features">
+          <li>Tout l'Essentiel, plus :</li>
+          <li>Notifications SMS automatiques</li>
+          <li>Rappels 24h avant le RDV</li>
+          <li>Gestion multi-agents</li>
+          <li>Statistiques & graphiques</li>
+          <li>Export Excel des données</li>
+          <li class="off">Support prioritaire dédié</li>
+        </ul>
+        <a href="contact.html" class="btn btn-vert" style="width:100%;justify-content:center">Demander un devis</a>
+      </div>
+
+      <div class="plan reveal">
+        <div class="plan-name">Premium</div>
+        <div class="plan-target">Pour les grandes mairies aux besoins spécifiques.</div>
+        <div class="plan-price">Sur devis<small>Solution sur-mesure</small></div>
+        <ul class="plan-features">
+          <li>Tout le Pro, plus :</li>
+          <li>Support des langues locales</li>
+          <li>Personnalisation avancée</li>
+          <li>Support prioritaire dédié</li>
+          <li>Accompagnement & formation</li>
+          <li>Volume de SMS étendu</li>
+          <li>Conseil à la digitalisation</li>
+        </ul>
+        <a href="contact.html" class="btn btn-outline" style="width:100%;justify-content:center">Demander un devis</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINALE -->
+<section class="cta-final">
+  <div class="container">
+    <h2 class="reveal">Prêt à moderniser votre mairie ?</h2>
+    <p class="reveal">Rejoignez le mouvement de digitalisation des administrations africaines. Discutons de votre projet — sans engagement.</p>
+    <a href="contact.html" class="btn btn-gold reveal">📧 Demander un devis gratuit</a>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-logo">🏛️ DigiMairie</div>
+  <p>Rapprocher les citoyens de leur administration, un rendez-vous à la fois.</p>
+  <p style="margin-top:.8rem">
+    <a href="accueil.html">Accueil</a> &nbsp;·&nbsp;
+    <a href="index.html?mairie=dakar">Démo</a> &nbsp;·&nbsp;
+    <a href="contact.html">Contact</a> &nbsp;·&nbsp;
+    <a href="inscription.html">Inscription</a>
+  </p>
+  <p style="margin-top:1rem;font-size:.78rem;opacity:.6">Conçu à Dakar, Sénégal 🇸🇳</p>
+</footer>
+
+<script>
+// Nav au scroll
+const nav=document.getElementById('navbar');
+window.addEventListener('scroll',()=>{nav.classList.toggle('scrolled',window.scrollY>40);});
+
+// Reveal au scroll
+const obs=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('show');obs.unobserve(e.target);}});
+},{threshold:.12});
+document.querySelectorAll('.reveal').forEach((el,i)=>{el.style.transitionDelay=(i%4*0.08)+'s';obs.observe(el);});
+</script>
+</body>
+</html>
