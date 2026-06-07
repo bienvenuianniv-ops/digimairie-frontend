@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dossier de mariage — DigiMairie</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;0,900;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --vert:#1a6b3c;--vert-mid:#238a4e;--vert-clair:#d6f0e0;--vert-pale:#edf7f1;
+  --or:#e8a020;--or-clair:#fef3d0;
+  --noir:#0d1f14;--sable:#f7f2ea;--blanc:#fff;--gris:#6b7280;--gris-clair:#f3f4f6;
+  --rouge:#c0392b;--vert-ok:#16a34a;--texte:#1a2e1e;
+  --radius:14px;--shadow:0 4px 24px rgba(0,0,0,.08);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--sable);color:var(--texte);min-height:100vh}
+
+nav{background:var(--vert);padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{display:flex;align-items:center;gap:.75rem;text-decoration:none}
+.nav-logo-mark{width:38px;height:38px;background:var(--or);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem}
+.nav-logo-text{font-family:'Fraunces',serif;font-size:1.2rem;color:#fff;font-weight:700}
+.nav-links a{color:rgba(255,255,255,.85);text-decoration:none;font-size:.9rem;font-weight:500;margin-left:1.5rem}
+.nav-links a:hover{color:var(--or)}
+
+.hero{background:linear-gradient(135deg,var(--noir),#1a3d24);padding:2.8rem 2rem;text-align:center}
+.hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(232,160,32,.15);border:1px solid rgba(232,160,32,.3);color:var(--or);font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:.35rem 1rem;border-radius:999px;margin-bottom:1rem}
+.hero h1{font-family:'Fraunces',serif;font-size:clamp(1.6rem,4vw,2.3rem);color:#fff;margin-bottom:.6rem}
+.hero p{color:rgba(255,255,255,.7);font-size:.95rem;max-width:520px;margin:0 auto}
+
+.main{max-width:760px;margin:0 auto;padding:2.5rem 1.2rem}
+
+/* Choix type */
+.type-choice{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;margin-bottom:1rem}
+@media(max-width:560px){.type-choice{grid-template-columns:1fr}}
+.type-card{background:#fff;border:2px solid #e5e7eb;border-radius:var(--radius);padding:2rem 1.5rem;text-align:center;cursor:pointer;transition:all .2s;box-shadow:var(--shadow)}
+.type-card:hover{border-color:var(--vert-mid);transform:translateY(-3px)}
+.type-card.sel{border-color:var(--vert);background:var(--vert-pale)}
+.type-icon{font-size:2.8rem;margin-bottom:.8rem}
+.type-card h3{font-family:'Fraunces',serif;font-size:1.15rem;margin-bottom:.5rem}
+.type-card p{font-size:.84rem;color:var(--gris);line-height:1.5}
+
+/* Form */
+.card{background:#fff;border-radius:var(--radius);padding:1.8rem;box-shadow:var(--shadow);margin-bottom:1.4rem}
+.card-title{font-family:'Fraunces',serif;font-size:1.15rem;margin-bottom:1.3rem;display:flex;align-items:center;gap:.5rem;padding-bottom:.8rem;border-bottom:2px solid var(--vert-pale)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:560px){.form-grid{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:.35rem}
+.field.full{grid-column:1/-1}
+label{font-size:.78rem;font-weight:700;color:var(--texte)}
+input,select,textarea{padding:.65rem .85rem;border:1.5px solid #d1d5db;border-radius:9px;font-size:.88rem;font-family:inherit;color:var(--texte);transition:border-color .2s;background:#fff}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--vert);box-shadow:0 0 0 3px rgba(26,107,60,.1)}
+textarea{resize:vertical;min-height:70px}
+
+.btn{padding:.8rem 2rem;border-radius:10px;border:none;cursor:pointer;font-family:inherit;font-size:.92rem;font-weight:700;transition:all .2s;display:inline-flex;align-items:center;gap:.5rem}
+.btn-primary{background:var(--vert);color:#fff;width:100%;justify-content:center}
+.btn-primary:hover{background:var(--vert-mid)}
+.btn-primary:disabled{background:#9ca3af;cursor:not-allowed}
+.btn-secondary{background:#fff;color:var(--texte);border:1.5px solid #d1d5db}
+
+.hidden{display:none}
+.error-banner{background:#fee2e2;border:1px solid #fca5a5;border-radius:10px;padding:.9rem 1.2rem;color:var(--rouge);font-size:.85rem;margin-bottom:1rem;display:none}
+
+/* Succès */
+.success{background:#fff;border-radius:var(--radius);padding:2.5rem 2rem;text-align:center;box-shadow:var(--shadow);display:none}
+.success-icon{width:80px;height:80px;border-radius:50%;background:var(--vert-clair);border:3px solid var(--vert-ok);display:flex;align-items:center;justify-content:center;font-size:2.4rem;margin:0 auto 1.3rem}
+.success h2{font-family:'Fraunces',serif;font-size:1.7rem;color:var(--vert);margin-bottom:.6rem}
+.success p{color:var(--gris);font-size:.9rem;line-height:1.6;margin-bottom:1rem}
+.ref-box{background:var(--vert);color:#fff;border-radius:10px;padding:.7rem 1.8rem;display:inline-block;margin:.6rem 0 1.2rem;font-family:'Fraunces',serif;font-weight:900;letter-spacing:.1em;font-size:1.2rem}
+.info-note{background:var(--or-clair);border-left:4px solid var(--or);border-radius:8px;padding:.9rem 1.1rem;font-size:.84rem;color:#7a4a00;text-align:left;margin-top:1rem}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="accueil.html" class="nav-logo">
+    <div class="nav-logo-mark">🏛️</div>
+    <span class="nav-logo-text">DigiMairie</span>
+  </a>
+  <div class="nav-links">
+    <a href="accueil.html">Accueil</a>
+    <a href="index.html">Rendez-vous</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-badge">💍 Service d'état civil</div>
+  <h1>Dossier de mariage</h1>
+  <p>Déposez votre dossier de mariage en ligne. Célébration à la mairie ou constatation d'un mariage religieux.</p>
+</div>
+
+<div class="main">
+
+  <div id="error-banner" class="error-banner"></div>
+
+  <!-- ÉTAPE 0 : CHOIX DU TYPE -->
+  <div id="step-type">
+    <div class="card-title" style="border:none;justify-content:center">Quel type de démarche souhaitez-vous ?</div>
+    <div class="type-choice">
+      <div class="type-card" id="card-celebration" onclick="choisirType('celebration')">
+        <div class="type-icon">🏛️</div>
+        <h3>Mariage à célébrer</h3>
+        <p>La cérémonie se déroulera à la mairie. Vous déposez votre dossier et choisissez une date.</p>
+      </div>
+      <div class="type-card" id="card-constatation" onclick="choisirType('constatation')">
+        <div class="type-icon">📜</div>
+        <h3>Mariage à constater</h3>
+        <p>Votre mariage religieux a déjà eu lieu. La mairie le constate et l'enregistre légalement.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- FORMULAIRE -->
+  <div id="step-form" class="hidden">
+
+    <!-- Conjoint 1 -->
+    <div class="card">
+      <div class="card-title">👤 Premier conjoint</div>
+      <div class="form-grid">
+        <div class="field"><label>Nom *</label><input type="text" id="c1_nom"></div>
+        <div class="field"><label>Prénom *</label><input type="text" id="c1_prenom"></div>
+        <div class="field"><label>Date de naissance</label><input type="date" id="c1_naissance"></div>
+        <div class="field"><label>Lieu de naissance</label><input type="text" id="c1_lieu_naissance"></div>
+        <div class="field"><label>Profession</label><input type="text" id="c1_profession"></div>
+        <div class="field"><label>Domicile</label><input type="text" id="c1_domicile"></div>
+      </div>
+    </div>
+
+    <!-- Conjoint 2 -->
+    <div class="card">
+      <div class="card-title">👤 Second conjoint</div>
+      <div class="form-grid">
+        <div class="field"><label>Nom *</label><input type="text" id="c2_nom"></div>
+        <div class="field"><label>Prénom *</label><input type="text" id="c2_prenom"></div>
+        <div class="field"><label>Date de naissance</label><input type="date" id="c2_naissance"></div>
+        <div class="field"><label>Lieu de naissance</label><input type="text" id="c2_lieu_naissance"></div>
+        <div class="field"><label>Profession</label><input type="text" id="c2_profession"></div>
+        <div class="field"><label>Domicile</label><input type="text" id="c2_domicile"></div>
+      </div>
+    </div>
+
+    <!-- Régime + dates -->
+    <div class="card">
+      <div class="card-title">📋 Détails du mariage</div>
+      <div class="form-grid">
+        <div class="field"><label>Régime matrimonial *</label>
+          <select id="regime">
+            <option value="">-- Choisir --</option>
+            <option value="monogamie">Monogamie</option>
+            <option value="polygamie">Polygamie</option>
+          </select>
+        </div>
+
+        <!-- Spécifique célébration -->
+        <div class="field type-celebration"><label>Date de célébration souhaitée</label><input type="date" id="date_celebration"></div>
+
+        <!-- Spécifique constatation -->
+        <div class="field type-constatation hidden"><label>Date du mariage religieux</label><input type="date" id="date_religieuse"></div>
+        <div class="field full type-constatation hidden"><label>Lieu (mosquée / église)</label><input type="text" id="lieu_culte" placeholder="Ex: Grande Mosquée de Dakar"></div>
+      </div>
+    </div>
+
+    <!-- Témoins -->
+    <div class="card">
+      <div class="card-title">👥 Témoins (2 par conjoint)</div>
+      <div class="form-grid">
+        <div class="field"><label>Témoin 1 — premier conjoint</label><input type="text" id="temoin1_c1" placeholder="Nom et prénom"></div>
+        <div class="field"><label>Témoin 2 — premier conjoint</label><input type="text" id="temoin2_c1" placeholder="Nom et prénom"></div>
+        <div class="field"><label>Témoin 1 — second conjoint</label><input type="text" id="temoin1_c2" placeholder="Nom et prénom"></div>
+        <div class="field"><label>Témoin 2 — second conjoint</label><input type="text" id="temoin2_c2" placeholder="Nom et prénom"></div>
+      </div>
+    </div>
+
+    <!-- Contact -->
+    <div class="card">
+      <div class="card-title">📞 Contact</div>
+      <div class="form-grid">
+        <div class="field"><label>Téléphone *</label><input type="tel" id="telephone" placeholder="+221 ..."></div>
+        <div class="field"><label>Email (optionnel)</label><input type="email" id="email"></div>
+        <div class="field full"><label>Remarques</label><textarea id="notes" placeholder="Informations complémentaires..."></textarea></div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:1rem;flex-wrap:wrap">
+      <button class="btn btn-secondary" onclick="retourType()">← Changer de type</button>
+      <button class="btn btn-primary" style="flex:1" onclick="soumettre()">✓ Déposer mon dossier</button>
+    </div>
+  </div>
+
+  <!-- SUCCÈS -->
+  <div id="step-success" class="success">
+    <div class="success-icon">✅</div>
+    <h2>Dossier déposé avec succès !</h2>
+    <p>Votre dossier de mariage a bien été enregistré. Conservez votre numéro de référence :</p>
+    <div class="ref-box" id="success-ref">MAR-XXXXXX</div>
+    <div class="info-note" id="success-note"></div>
+    <br>
+    <button class="btn btn-primary" onclick="location.reload()" style="margin-top:1rem">+ Déposer un autre dossier</button>
+  </div>
+
+</div>
+
+<script>
+const API_URL = 'https://mairie-rdv-backend.onrender.com/api';
+
+const apiCall = async (endpoint, method='GET', body=null) => {
+  const headers = {'Content-Type':'application/json'};
+  const options = {method, headers};
+  if (body) options.body = JSON.stringify(body);
+  const response = await fetch(`${API_URL}${endpoint}`, options);
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.message || 'Erreur serveur');
+  return data;
+};
+
+// Récupère le slug de la mairie depuis l'URL
+const params = new URLSearchParams(window.location.search);
+const mairieSlug = params.get('mairie');
+let mairieId = null;
+
+// Charger l'id de la mairie si un slug est présent
+(async () => {
+  if (mairieSlug) {
+    try {
+      const m = await apiCall(`/mairies/${mairieSlug}`);
+      mairieId = m.id;
+    } catch (e) { console.log('Mairie non trouvée'); }
+  }
+})();
+
+let typeMariage = '';
+
+const choisirType = (type) => {
+  typeMariage = type;
+  document.getElementById('card-celebration').classList.toggle('sel', type==='celebration');
+  document.getElementById('card-constatation').classList.toggle('sel', type==='constatation');
+
+  // Afficher les bons champs
+  document.querySelectorAll('.type-celebration').forEach(el => el.classList.toggle('hidden', type!=='celebration'));
+  document.querySelectorAll('.type-constatation').forEach(el => el.classList.toggle('hidden', type!=='constatation'));
+
+  // Passer au formulaire
+  document.getElementById('step-type').classList.add('hidden');
+  document.getElementById('step-form').classList.remove('hidden');
+  window.scrollTo({top:0,behavior:'smooth'});
+};
+
+const retourType = () => {
+  document.getElementById('step-form').classList.add('hidden');
+  document.getElementById('step-type').classList.remove('hidden');
+  window.scrollTo({top:0,behavior:'smooth'});
+};
+
+const showError = (msg) => {
+  const b = document.getElementById('error-banner');
+  b.textContent = '❌ ' + msg;
+  b.style.display = 'block';
+  window.scrollTo({top:0,behavior:'smooth'});
+  setTimeout(()=>b.style.display='none', 5000);
+};
+
+const val = (id) => document.getElementById(id).value.trim();
+
+const soumettre = async () => {
+  // Validation minimale
+  if (!val('c1_nom') || !val('c1_prenom') || !val('c2_nom') || !val('c2_prenom')) {
+    return showError('Les noms et prénoms des deux conjoints sont obligatoires.');
+  }
+  if (!val('regime')) return showError('Veuillez choisir le régime matrimonial.');
+  if (!val('telephone')) return showError('Le téléphone est obligatoire.');
+
+  const btn = document.querySelector('#step-form .btn-primary');
+  btn.disabled = true; btn.textContent = '⏳ Envoi en cours...';
+
+  try {
+    const data = await apiCall('/mariages', 'POST', {
+      type_mariage: typeMariage,
+      c1_nom: val('c1_nom'), c1_prenom: val('c1_prenom'), c1_naissance: val('c1_naissance'),
+      c1_lieu_naissance: val('c1_lieu_naissance'), c1_profession: val('c1_profession'), c1_domicile: val('c1_domicile'),
+      c2_nom: val('c2_nom'), c2_prenom: val('c2_prenom'), c2_naissance: val('c2_naissance'),
+      c2_lieu_naissance: val('c2_lieu_naissance'), c2_profession: val('c2_profession'), c2_domicile: val('c2_domicile'),
+      regime: val('regime'),
+      temoin1_c1: val('temoin1_c1'), temoin2_c1: val('temoin2_c1'),
+      temoin1_c2: val('temoin1_c2'), temoin2_c2: val('temoin2_c2'),
+      date_celebration: val('date_celebration'),
+      date_religieuse: val('date_religieuse'), lieu_culte: val('lieu_culte'),
+      telephone: val('telephone'), email: val('email'), notes: val('notes'),
+      mairie_id: mairieId
+    });
+
+    document.getElementById('step-form').classList.add('hidden');
+    document.getElementById('step-success').style.display = 'block';
+    document.getElementById('success-ref').textContent = data.mariage.reference;
+
+    const note = typeMariage === 'celebration'
+      ? '🏛️ Votre dossier de célébration sera vérifié par la mairie. Vous serez contacté(e) pour la publication des bans et la confirmation de la date de célébration.'
+      : '📜 Votre dossier de constatation sera vérifié. Pensez à apporter votre certificat de mariage religieux à la mairie pour finaliser l\'enregistrement légal.';
+    document.getElementById('success-note').innerHTML = note;
+    window.scrollTo({top:0,behavior:'smooth'});
+
+  } catch (err) {
+    showError(err.message);
+    btn.disabled = false; btn.textContent = '✓ Déposer mon dossier';
+  }
+};
+</script>
+</body>
+</html>
