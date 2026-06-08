@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gestion des naissances — DigiMairie</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;0,900;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --vert:#1a6b3c;--vert-mid:#238a4e;--vert-clair:#d6f0e0;--vert-pale:#edf7f1;
+  --or:#e8a020;--or-clair:#fef3d0;
+  --noir:#0d1f14;--sable:#f7f2ea;--blanc:#fff;--gris:#6b7280;--gris-clair:#f3f4f6;
+  --rouge:#c0392b;--vert-ok:#16a34a;--bleu:#3b82f6;--violet:#8b5cf6;--texte:#1a2e1e;
+  --radius:14px;--shadow:0 4px 24px rgba(0,0,0,.08);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--sable);color:var(--texte);min-height:100vh}
+header{background:linear-gradient(135deg,var(--noir),#1a3d24);padding:0 2rem;height:68px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 16px rgba(0,0,0,.2);position:sticky;top:0;z-index:100}
+.logo{display:flex;align-items:center;gap:12px}
+.logo-mark{width:40px;height:40px;background:var(--or);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem}
+.logo h1{font-family:'Fraunces',serif;font-size:1.15rem;color:#fff;line-height:1.1}
+.logo p{font-size:.66rem;color:rgba(255,255,255,.6);letter-spacing:.06em;text-transform:uppercase}
+.header-links{display:flex;gap:1rem;align-items:center}
+.header-links a{color:rgba(255,255,255,.8);text-decoration:none;font-size:.84rem;font-weight:600}
+.header-links a:hover{color:var(--or)}
+main{max-width:1100px;margin:0 auto;padding:2rem 1.5rem}
+.page-title{font-family:'Fraunces',serif;font-size:1.7rem;margin-bottom:.3rem}
+.page-sub{color:var(--gris);font-size:.9rem;margin-bottom:2rem}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2rem}
+@media(max-width:680px){.stats{grid-template-columns:1fr 1fr}}
+.stat-card{background:#fff;border-radius:var(--radius);padding:1.2rem;box-shadow:var(--shadow);border-left:4px solid transparent}
+.stat-card.gold{border-color:var(--or)}.stat-card.blue{border-color:var(--bleu)}.stat-card.violet{border-color:var(--violet)}.stat-card.green{border-color:var(--vert-ok)}
+.stat-v{font-family:'Fraunces',serif;font-size:2rem;font-weight:900;line-height:1}
+.stat-l{font-size:.74rem;color:var(--gris);margin-top:.3rem}
+.toolbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.8rem;margin-bottom:1rem}
+.filter-bar{display:flex;gap:.45rem;flex-wrap:wrap}
+.f-btn{padding:.35rem .9rem;border-radius:999px;border:1.5px solid #d1d5db;background:#fff;font-size:.78rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}
+.f-btn.active{background:var(--vert);border-color:var(--vert);color:#fff}
+.card{background:#fff;border-radius:var(--radius);padding:1.3rem;box-shadow:var(--shadow)}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:.7rem;font-weight:700;color:var(--gris);text-transform:uppercase;letter-spacing:.05em;padding:.7rem 1rem;background:var(--gris-clair);border-bottom:2px solid #e5e7eb}
+th:first-child{border-radius:8px 0 0 0}th:last-child{border-radius:0 8px 0 0}
+td{padding:.85rem 1rem;border-bottom:1px solid #f3f4f6;font-size:.84rem;vertical-align:middle}
+tr:hover td{background:#fafdf9}
+.enfant{font-weight:700}
+.enfant small{display:block;font-weight:400;color:var(--gris);font-size:.72rem;margin-top:.15rem}
+.badge{display:inline-block;padding:.2rem .65rem;border-radius:999px;font-size:.7rem;font-weight:700}
+.sexe-m{background:#dbeafe;color:#1e40af}
+.sexe-f{background:#fce7f3;color:#9d174d}
+.st-pre{background:#fef3c7;color:#92400e}
+.st-verif{background:#dbeafe;color:#1e40af}
+.st-fini{background:#d1fae5;color:#065f46}
+.ref-code{background:var(--gris-clair);padding:.13rem .45rem;border-radius:5px;font-size:.74rem;font-family:monospace}
+.btn{padding:.4rem .85rem;border-radius:8px;border:none;cursor:pointer;font-family:inherit;font-size:.76rem;font-weight:700;transition:all .2s}
+.btn-voir{background:#fff;color:var(--texte);border:1.5px solid #d1d5db}
+.btn-voir:hover{border-color:var(--vert);color:var(--vert)}
+.empty{text-align:center;padding:3rem;color:var(--gris)}
+.empty .ei{font-size:3rem;margin-bottom:.7rem}
+.loading{text-align:center;padding:3rem;color:var(--gris)}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center;padding:1rem}
+.overlay.open{display:flex}
+.modal{background:#fff;border-radius:18px;padding:1.8rem;max-width:560px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.25)}
+.modal h3{font-family:'Fraunces',serif;font-size:1.3rem;margin-bottom:.3rem}
+.modal-ref{color:var(--gris);font-size:.82rem;margin-bottom:1.2rem}
+.detail-section{margin-bottom:1.2rem}
+.detail-section h4{font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;color:var(--vert);margin-bottom:.6rem;padding-bottom:.3rem;border-bottom:1px solid var(--vert-pale)}
+.d-row{display:flex;justify-content:space-between;padding:.3rem 0;font-size:.85rem;gap:1rem}
+.d-row span:first-child{color:var(--gris)}
+.d-row span:last-child{font-weight:600;text-align:right}
+.statut-actions{margin-top:1.3rem}
+.statut-actions label{font-size:.78rem;font-weight:700;display:block;margin-bottom:.5rem}
+.statut-actions select{width:100%;padding:.6rem .8rem;border:1.5px solid #d1d5db;border-radius:9px;font-family:inherit;font-size:.88rem;margin-bottom:.8rem}
+.m-actions{display:flex;justify-content:flex-end;gap:.7rem;margin-top:1rem}
+.btn-primary{background:var(--vert);color:#fff;padding:.6rem 1.4rem;border-radius:9px;border:none;font-weight:700;cursor:pointer;font-family:inherit;font-size:.85rem}
+.btn-secondary{background:#fff;color:var(--texte);border:1.5px solid #d1d5db;padding:.6rem 1.4rem;border-radius:9px;font-weight:700;cursor:pointer;font-family:inherit;font-size:.85rem}
+.login-overlay{position:fixed;inset:0;background:linear-gradient(135deg,var(--noir),#1a3d24);z-index:300;display:flex;align-items:center;justify-content:center;padding:1rem}
+.login-box{background:#fff;border-radius:20px;padding:2.5rem;max-width:400px;width:100%;box-shadow:0 24px 64px rgba(0,0,0,.3);text-align:center}
+.login-box .logo-mark{margin:0 auto 1rem}
+.login-box h2{font-family:'Fraunces',serif;font-size:1.4rem;margin-bottom:.4rem}
+.login-box p{color:var(--gris);font-size:.85rem;margin-bottom:1.4rem}
+.login-box input{width:100%;padding:.75rem 1rem;border:1.5px solid #d1d5db;border-radius:10px;font-size:.9rem;font-family:inherit;margin-bottom:.9rem}
+.login-box button{width:100%;padding:.8rem;background:var(--vert);color:#fff;border:none;border-radius:10px;font-size:.92rem;font-weight:700;cursor:pointer;font-family:inherit}
+.login-error{color:var(--rouge);font-size:.82rem;margin-bottom:.9rem;display:none}
+</style>
+</head>
+<body>
+<div class="login-overlay" id="login-overlay">
+  <div class="login-box">
+    <div class="logo-mark">🔐</div>
+    <h2>Connexion Agent</h2>
+    <p>Gestion des déclarations de naissance</p>
+    <div class="login-error" id="login-error">❌ Identifiants incorrects</div>
+    <input type="email" id="login-email" placeholder="Email" onkeypress="if(event.key==='Enter')document.getElementById('login-pwd').focus()">
+    <input type="password" id="login-pwd" placeholder="Mot de passe" onkeypress="if(event.key==='Enter')seConnecter()">
+    <button onclick="seConnecter()">Se connecter</button>
+  </div>
+</div>
+<div id="dashboard" style="display:none">
+  <header>
+    <div class="logo">
+      <div class="logo-mark">📋</div>
+      <div><h1>Gestion des naissances</h1><p>Espace agent</p></div>
+    </div>
+    <div class="header-links">
+      <a href="index.html">← Rendez-vous</a>
+      <a href="#" onclick="deconnexion();return false">Déconnexion</a>
+    </div>
+  </header>
+  <main>
+    <h2 class="page-title">Déclarations de naissance</h2>
+    <p class="page-sub">Consultez les pré-déclarations et faites évoluer leur statut après vérification des documents.</p>
+    <div class="stats">
+      <div class="stat-card gold"><div class="stat-v" id="s-total">0</div><div class="stat-l">Total déclarations</div></div>
+      <div class="stat-card blue"><div class="stat-v" id="s-pre">0</div><div class="stat-l">⏳ Pré-déclarées</div></div>
+      <div class="stat-card violet"><div class="stat-v" id="s-verif">0</div><div class="stat-l">📑 En vérification</div></div>
+      <div class="stat-card green"><div class="stat-v" id="s-fini">0</div><div class="stat-l">✅ Enregistrées</div></div>
+    </div>
+    <div class="toolbar">
+      <div class="filter-bar">
+        <button class="f-btn active" onclick="filtrer('tous',this)">Toutes</button>
+        <button class="f-btn" onclick="filtrer('pre-declare',this)">⏳ Pré-déclarées</button>
+        <button class="f-btn" onclick="filtrer('verifie',this)">📑 En vérification</button>
+        <button class="f-btn" onclick="filtrer('enregistre',this)">✅ Enregistrées</button>
+      </div>
+    </div>
+    <div class="card">
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr><th>Réf.</th><th>Enfant</th><th>Sexe</th><th>Né(e) le</th><th>Statut</th><th>Action</th></tr>
+          </thead>
+          <tbody id="tbody">
+            <tr><td colspan="6"><div class="loading">⏳ Chargement...</div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+<div class="overlay" id="overlay" onclick="if(event.target===this)fermerModal()">
+  <div class="modal" id="modal-content"></div>
+</div>
+<script>
+const API_URL = 'https://mairie-rdv-backend.onrender.com/api';
+let authToken = localStorage.getItem('token') || null;
+let toutesNaissances = [];
+let filtreActuel = 'tous';
+const apiCall = async (endpoint, method='GET', body=null, token=null) => {
+  const headers = {'Content-Type':'application/json'};
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+  const options = {method, headers};
+  if (body) options.body = JSON.stringify(body);
+  const response = await fetch(`${API_URL}${endpoint}`, options);
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.message || 'Erreur serveur');
+  return data;
+};
+const seConnecter = async () => {
+  const email = document.getElementById('login-email').value.trim();
+  const pwd = document.getElementById('login-pwd').value.trim();
+  const errEl = document.getElementById('login-error');
+  if (!email || !pwd) { errEl.style.display='block'; errEl.textContent='❌ Remplissez tous les champs'; return; }
+  try {
+    const data = await apiCall('/auth/connecter', 'POST', { email, mot_de_passe: pwd });
+    authToken = data.token;
+    localStorage.setItem('token', data.token);
+    afficherDashboard();
+  } catch (err) {
+    errEl.style.display = 'block';
+    errEl.textContent = '❌ ' + err.message;
+  }
+};
+const deconnexion = () => { authToken = null; localStorage.removeItem('token'); location.reload(); };
+const afficherDashboard = () => {
+  document.getElementById('login-overlay').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'block';
+  chargerNaissances();
+};
+if (authToken) afficherDashboard();
+const labelsStatut = { 'pre-declare':'Pré-déclaré', 'verifie':'Documents vérifiés', 'enregistre':'Acte enregistré' };
+const classeStatut = { 'pre-declare':'st-pre', 'verifie':'st-verif', 'enregistre':'st-fini' };
+const chargerNaissances = async () => {
+  const tbody = document.getElementById('tbody');
+  try {
+    toutesNaissances = await apiCall('/naissances', 'GET', null, authToken);
+    document.getElementById('s-total').textContent = toutesNaissances.length;
+    document.getElementById('s-pre').textContent = toutesNaissances.filter(n => n.statut==='pre-declare').length;
+    document.getElementById('s-verif').textContent = toutesNaissances.filter(n => n.statut==='verifie').length;
+    document.getElementById('s-fini').textContent = toutesNaissances.filter(n => n.statut==='enregistre').length;
+    afficherTableau();
+  } catch (err) {
+    if (err.message.includes('oken')) {
+      authToken = null; localStorage.removeItem('token');
+      tbody.innerHTML = '<tr><td colspan="6"><div class="empty">🔐 Session expirée — rechargez la page</div></td></tr>';
+    } else {
+      tbody.innerHTML = `<tr><td colspan="6"><div class="empty">❌ ${err.message}</div></td></tr>`;
+    }
+  }
+};
+const afficherTableau = () => {
+  const tbody = document.getElementById('tbody');
+  let liste = [...toutesNaissances];
+  if (filtreActuel !== 'tous') liste = liste.filter(n => n.statut === filtreActuel);
+  if (!liste.length) {
+    tbody.innerHTML = `<tr><td colspan="6"><div class="empty"><div class="ei">📋</div>Aucune déclaration</div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = '';
+  liste.forEach(n => {
+    const dateNaiss = n.enfant_date_naissance ? new Date(n.enfant_date_naissance).toLocaleDateString('fr-FR') : '—';
+    const sexeBadge = n.enfant_sexe === 'Masculin'
+      ? '<span class="badge sexe-m">♂ Masculin</span>'
+      : '<span class="badge sexe-f">♀ Féminin</span>';
+    const stClasse = classeStatut[n.statut] || 'st-pre';
+    const stLabel = labelsStatut[n.statut] || n.statut;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><span class="ref-code">${n.reference}</span></td>
+      <td><div class="enfant">${n.enfant_prenom} ${n.enfant_nom}<small>Mère : ${n.mere_prenom} ${n.mere_nom}</small></div></td>
+      <td>${sexeBadge}</td>
+      <td>${dateNaiss}</td>
+      <td><span class="badge ${stClasse}">${stLabel}</span></td>
+      <td><button class="btn btn-voir" onclick="voirDetail(${n.id})">Voir</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+};
+const filtrer = (statut, btn) => {
+  filtreActuel = statut;
+  document.querySelectorAll('.f-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  afficherTableau();
+};
+const voirDetail = (id) => {
+  const n = toutesNaissances.find(x => x.id === id);
+  if (!n) return;
+  const fmt = (d) => d ? new Date(d).toLocaleDateString('fr-FR') : '—';
+  const optionsStatut = ['pre-declare','verifie','enregistre'];
+  const pere = (n.pere_nom || n.pere_prenom)
+    ? `<div class="d-row"><span>Nom complet</span><span>${n.pere_prenom||''} ${n.pere_nom||''}</span></div>
+       <div class="d-row"><span>Profession</span><span>${n.pere_profession||'—'}</span></div>
+       <div class="d-row"><span>Domicile</span><span>${n.pere_domicile||'—'}</span></div>`
+    : `<div class="d-row"><span style="color:var(--gris);font-style:italic">Non renseigné</span><span></span></div>`;
+  const complement = (n.num_certificat || n.temoin)
+    ? `<div class="detail-section">
+         <h4>Compléments</h4>
+         ${n.num_certificat ? `<div class="d-row"><span>N° certificat d'accouchement</span><span>${n.num_certificat}</span></div>` : ''}
+         ${n.temoin ? `<div class="d-row"><span>Témoin</span><span>${n.temoin}</span></div>` : ''}
+       </div>`
+    : '';
+  document.getElementById('modal-content').innerHTML = `
+    <h3>📋 Déclaration de naissance</h3>
+    <div class="modal-ref">Référence : <strong>${n.reference}</strong></div>
+    <div class="detail-section">
+      <h4>L'enfant</h4>
+      <div class="d-row"><span>Nom complet</span><span>${n.enfant_prenom} ${n.enfant_nom}</span></div>
+      <div class="d-row"><span>Sexe</span><span>${n.enfant_sexe}</span></div>
+      <div class="d-row"><span>Date de naissance</span><span>${fmt(n.enfant_date_naissance)} ${n.enfant_heure_naissance ? 'à '+n.enfant_heure_naissance : ''}</span></div>
+      <div class="d-row"><span>Lieu de naissance</span><span>${n.enfant_lieu_naissance || '—'}</span></div>
+    </div>
+    <div class="detail-section">
+      <h4>La mère</h4>
+      <div class="d-row"><span>Nom complet</span><span>${n.mere_prenom} ${n.mere_nom}</span></div>
+      <div class="d-row"><span>Profession</span><span>${n.mere_profession||'—'}</span></div>
+      <div class="d-row"><span>Domicile</span><span>${n.mere_domicile||'—'}</span></div>
+    </div>
+    <div class="detail-section">
+      <h4>Le père</h4>
+      ${pere}
+    </div>
+    <div class="detail-section">
+      <h4>Le déclarant</h4>
+      <div class="d-row"><span>Nom complet</span><span>${n.declarant_prenom} ${n.declarant_nom}</span></div>
+      <div class="d-row"><span>Lien avec l'enfant</span><span>${n.declarant_lien||'—'}</span></div>
+      <div class="d-row"><span>Téléphone</span><span>${n.declarant_tel||'—'}</span></div>
+      <div class="d-row"><span>Email</span><span>${n.declarant_email||'—'}</span></div>
+    </div>
+    ${complement}
+    ${n.notes ? `<div class="detail-section"><h4>Remarques</h4><div class="d-row"><span></span><span style="text-align:left;font-weight:400">${n.notes}</span></div></div>` : ''}
+    <div class="statut-actions">
+      <label>Faire évoluer le statut</label>
+      <select id="select-statut">
+        ${optionsStatut.map(s => `<option value="${s}" ${n.statut===s?'selected':''}>${labelsStatut[s]}</option>`).join('')}
+      </select>
+    </div>
+    <div class="m-actions">
+      <button class="btn-secondary" onclick="fermerModal()">Fermer</button>
+      <button class="btn-primary" onclick="majStatut(${n.id})">✓ Enregistrer le statut</button>
+    </div>
+  `;
+  document.getElementById('overlay').classList.add('open');
+};
+const majStatut = async (id) => {
+  const statut = document.getElementById('select-statut').value;
+  try {
+    await apiCall(`/naissances/${id}/statut`, 'PUT', { statut }, authToken);
+    fermerModal();
+    chargerNaissances();
+  } catch (err) {
+    alert('❌ Erreur : ' + err.message);
+  }
+};
+const fermerModal = () => document.getElementById('overlay').classList.remove('open');
+</script>
+</body>
+</html>
