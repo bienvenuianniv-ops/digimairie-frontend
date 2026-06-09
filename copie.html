@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Demande de copie d'acte — DigiMairie</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;0,900;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --vert:#1a6b3c;--vert-mid:#238a4e;--vert-clair:#d6f0e0;--vert-pale:#edf7f1;
+  --or:#e8a020;--or-clair:#fef3d0;
+  --noir:#0d1f14;--sable:#f7f2ea;--blanc:#fff;--gris:#6b7280;--gris-clair:#f3f4f6;
+  --rouge:#c0392b;--vert-ok:#16a34a;--texte:#1a2e1e;
+  --radius:14px;--shadow:0 4px 24px rgba(0,0,0,.08);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--sable);color:var(--texte);min-height:100vh}
+nav{background:var(--vert);padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{display:flex;align-items:center;gap:.75rem;text-decoration:none}
+.nav-logo-mark{width:38px;height:38px;background:var(--or);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem}
+.nav-logo-text{font-family:'Fraunces',serif;font-size:1.2rem;color:#fff;font-weight:700}
+.nav-links a{color:rgba(255,255,255,.85);text-decoration:none;font-size:.9rem;font-weight:500;margin-left:1.5rem}
+.nav-links a:hover{color:var(--or)}
+.hero{background:linear-gradient(135deg,var(--noir),#1a3d24);padding:2.6rem 2rem;text-align:center}
+.hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(232,160,32,.15);border:1px solid rgba(232,160,32,.3);color:var(--or);font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:.35rem 1rem;border-radius:999px;margin-bottom:1rem}
+.hero h1{font-family:'Fraunces',serif;font-size:clamp(1.6rem,4vw,2.2rem);color:#fff;margin-bottom:.5rem}
+.hero p{color:rgba(255,255,255,.7);font-size:.95rem;max-width:540px;margin:0 auto}
+.main{max-width:760px;margin:0 auto;padding:2.2rem 1.2rem}
+.info-banner{background:var(--or-clair);border-left:4px solid var(--or);border-radius:10px;padding:1rem 1.3rem;font-size:.86rem;color:#7a4a00;margin-bottom:1.6rem;line-height:1.55}
+.info-banner strong{display:block;margin-bottom:.3rem;font-size:.92rem}
+.type-choice{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1rem}
+@media(max-width:560px){.type-choice{grid-template-columns:1fr}}
+.type-card{background:#fff;border:2px solid #e5e7eb;border-radius:var(--radius);padding:1.6rem 1rem;text-align:center;cursor:pointer;transition:all .2s;box-shadow:var(--shadow)}
+.type-card:hover{border-color:var(--vert-mid);transform:translateY(-3px)}
+.type-card.sel{border-color:var(--vert);background:var(--vert-pale)}
+.type-icon{font-size:2.4rem;margin-bottom:.6rem}
+.type-card h3{font-family:'Fraunces',serif;font-size:1.05rem}
+.card{background:#fff;border-radius:var(--radius);padding:1.8rem;box-shadow:var(--shadow);margin-bottom:1.4rem}
+.card-title{font-family:'Fraunces',serif;font-size:1.12rem;margin-bottom:.4rem;display:flex;align-items:center;gap:.5rem}
+.card-hint{font-size:.78rem;color:var(--gris);margin-bottom:1.2rem}
+.optional-tag{font-size:.68rem;background:var(--gris-clair);color:var(--gris);padding:.1rem .5rem;border-radius:999px;font-weight:600;margin-left:.4rem}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:560px){.form-grid{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:.35rem}
+.field.full{grid-column:1/-1}
+label{font-size:.78rem;font-weight:700;color:var(--texte)}
+input,select,textarea{padding:.65rem .85rem;border:1.5px solid #d1d5db;border-radius:9px;font-size:.88rem;font-family:inherit;color:var(--texte);transition:border-color .2s;background:#fff}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--vert);box-shadow:0 0 0 3px rgba(26,107,60,.1)}
+textarea{resize:vertical;min-height:70px}
+.btn{padding:.8rem 2rem;border-radius:10px;border:none;cursor:pointer;font-family:inherit;font-size:.92rem;font-weight:700;transition:all .2s;display:inline-flex;align-items:center;gap:.5rem}
+.btn-primary{background:var(--vert);color:#fff;width:100%;justify-content:center}
+.btn-primary:hover{background:var(--vert-mid)}
+.btn-primary:disabled{background:#9ca3af;cursor:not-allowed}
+.btn-secondary{background:#fff;color:var(--texte);border:1.5px solid #d1d5db}
+.hidden{display:none}
+.error-banner{background:#fee2e2;border:1px solid #fca5a5;border-radius:10px;padding:.9rem 1.2rem;color:var(--rouge);font-size:.85rem;margin-bottom:1rem;display:none}
+.success{background:#fff;border-radius:var(--radius);padding:2.5rem 2rem;text-align:center;box-shadow:var(--shadow);display:none}
+.success-icon{width:80px;height:80px;border-radius:50%;background:var(--vert-clair);border:3px solid var(--vert-ok);display:flex;align-items:center;justify-content:center;font-size:2.4rem;margin:0 auto 1.3rem}
+.success h2{font-family:'Fraunces',serif;font-size:1.7rem;color:var(--vert);margin-bottom:.6rem}
+.success p{color:var(--gris);font-size:.9rem;line-height:1.6;margin-bottom:1rem}
+.ref-box{background:var(--vert);color:#fff;border-radius:10px;padding:.7rem 1.8rem;display:inline-block;margin:.6rem 0 1.2rem;font-family:'Fraunces',serif;font-weight:900;letter-spacing:.1em;font-size:1.2rem}
+.docs-box{background:var(--or-clair);border-left:4px solid var(--or);border-radius:8px;padding:1rem 1.2rem;font-size:.85rem;color:#7a4a00;text-align:left;margin-top:1rem}
+.docs-box strong{display:block;margin-bottom:.5rem}
+.docs-box ul{margin:0;padding-left:1.2rem}
+.docs-box li{margin:.25rem 0}
+</style>
+</head>
+<body>
+<nav>
+  <a href="accueil.html" class="nav-logo">
+    <div class="nav-logo-mark">🏛️</div>
+    <span class="nav-logo-text">DigiMairie</span>
+  </a>
+  <div class="nav-links">
+    <a href="accueil.html">Accueil</a>
+    <a href="index.html">Rendez-vous</a>
+  </div>
+</nav>
+<div class="hero">
+  <div class="hero-badge">📄 État civil</div>
+  <h1>Demande de copie d'acte</h1>
+  <p>Demandez une copie ou un extrait d'un acte de naissance, de mariage ou de décès.</p>
+</div>
+<div class="main">
+  <div class="info-banner">
+    <strong>ℹ️ Comment ça fonctionne</strong>
+    Votre demande sera transmise à la mairie. L'agent retrouve l'acte dans les registres, prépare la copie, puis vous serez informé(e) quand elle sera prête à être retirée (muni d'une pièce d'identité).
+  </div>
+  <div id="error-banner" class="error-banner"></div>
+
+  <!-- ÉTAPE 0 : type d'acte -->
+  <div id="step-type">
+    <div class="card-title" style="justify-content:center;border:none">Quel acte souhaitez-vous ?</div>
+    <div class="type-choice">
+      <div class="type-card" onclick="choisirType('naissance')"><div class="type-icon">📋</div><h3>Acte de naissance</h3></div>
+      <div class="type-card" onclick="choisirType('mariage')"><div class="type-icon">💍</div><h3>Acte de mariage</h3></div>
+      <div class="type-card" onclick="choisirType('deces')"><div class="type-icon">🕊️</div><h3>Acte de décès</h3></div>
+    </div>
+  </div>
+
+  <!-- FORMULAIRE -->
+  <div id="form-zone" class="hidden">
+    <div class="card">
+      <div class="card-title" id="acte-titre">📋 Acte recherché</div>
+      <div class="card-hint">Informations permettant de retrouver l'acte dans les registres.</div>
+      <div class="form-grid">
+        <div class="field"><label>Nom de la personne concernée *</label><input type="text" id="personne_nom"></div>
+        <div class="field"><label>Prénom de la personne concernée *</label><input type="text" id="personne_prenom"></div>
+        <div class="field"><label id="lbl-date">Date de l'événement</label><input type="date" id="date_evenement"></div>
+        <div class="field"><label>N° de l'acte <span class="optional-tag">si connu</span></label><input type="text" id="numero_acte"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📄 Votre demande</div>
+      <div class="card-hint">Type de copie souhaité.</div>
+      <div class="form-grid">
+        <div class="field"><label>Type de copie *</label>
+          <select id="type_copie">
+            <option value="">-- Choisir --</option>
+            <option value="Copie intégrale">Copie intégrale</option>
+            <option value="Extrait">Extrait</option>
+          </select>
+        </div>
+        <div class="field"><label>Nombre d'exemplaires</label><input type="number" id="nombre_exemplaires" value="1" min="1" max="10"></div>
+        <div class="field full"><label>Motif de la demande <span class="optional-tag">optionnel</span></label><input type="text" id="motif" placeholder="Ex: inscription scolaire, passeport..."></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🙋 Le demandeur</div>
+      <div class="card-hint">Vos coordonnées.</div>
+      <div class="form-grid">
+        <div class="field"><label>Nom *</label><input type="text" id="demandeur_nom"></div>
+        <div class="field"><label>Prénom *</label><input type="text" id="demandeur_prenom"></div>
+        <div class="field"><label>Lien avec la personne concernée</label>
+          <select id="demandeur_lien">
+            <option value="">-- Choisir --</option>
+            <option value="Moi-même">C'est moi-même</option>
+            <option value="Parent">Parent</option>
+            <option value="Enfant">Enfant</option>
+            <option value="Conjoint">Conjoint</option>
+            <option value="Autre proche">Autre proche</option>
+          </select>
+        </div>
+        <div class="field"><label>Téléphone *</label><input type="tel" id="demandeur_tel" placeholder="+221 ..."></div>
+        <div class="field full"><label>Email <span class="optional-tag">optionnel</span></label><input type="email" id="demandeur_email"></div>
+        <div class="field full"><label>Remarques</label><textarea id="notes" placeholder="Informations utiles..."></textarea></div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:1rem;flex-wrap:wrap">
+      <button class="btn btn-secondary" onclick="retourType()">← Changer d'acte</button>
+      <button class="btn btn-primary" style="flex:1" onclick="soumettre()">✓ Envoyer ma demande</button>
+    </div>
+  </div>
+
+  <!-- SUCCÈS -->
+  <div id="success" class="success">
+    <div class="success-icon">✅</div>
+    <h2>Demande enregistrée !</h2>
+    <p>Votre demande de copie d'acte a bien été transmise. Conservez votre référence :</p>
+    <div class="ref-box" id="success-ref">COP-XXXXXX</div>
+    <div class="docs-box">
+      <strong>📋 Pour retirer votre copie à la mairie :</strong>
+      <ul>
+        <li>Présentez cette référence de demande</li>
+        <li>Munissez-vous d'une pièce d'identité</li>
+        <li>Le cas échéant, un justificatif du lien de parenté</li>
+      </ul>
+    </div>
+    <br>
+    <button class="btn btn-primary" onclick="location.reload()" style="margin-top:.5rem">+ Nouvelle demande</button>
+  </div>
+</div>
+<script>
+const API_URL = 'https://mairie-rdv-backend.onrender.com/api';
+const apiCall = async (endpoint, method='GET', body=null) => {
+  const headers = {'Content-Type':'application/json'};
+  const options = {method, headers};
+  if (body) options.body = JSON.stringify(body);
+  const response = await fetch(`${API_URL}${endpoint}`, options);
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.message || 'Erreur serveur');
+  return data;
+};
+const params = new URLSearchParams(window.location.search);
+const mairieSlug = params.get('mairie');
+let mairieId = null;
+(async () => {
+  if (mairieSlug) {
+    try { const m = await apiCall(`/mairies/${mairieSlug}`); mairieId = m.id; }
+    catch (e) { console.log('Mairie non trouvée'); }
+  }
+})();
+let typeActe = '';
+const titres = {
+  naissance: { icon:'📋', titre:'Acte de naissance', dateLbl:'Date de naissance' },
+  mariage:   { icon:'💍', titre:'Acte de mariage',   dateLbl:'Date du mariage' },
+  deces:     { icon:'🕊️', titre:'Acte de décès',     dateLbl:'Date du décès' }
+};
+const choisirType = (type) => {
+  typeActe = type;
+  const t = titres[type];
+  document.getElementById('acte-titre').textContent = `${t.icon} ${t.titre} recherché`;
+  document.getElementById('lbl-date').textContent = t.dateLbl;
+  document.getElementById('step-type').classList.add('hidden');
+  document.getElementById('form-zone').classList.remove('hidden');
+  window.scrollTo({top:0,behavior:'smooth'});
+};
+const retourType = () => {
+  document.getElementById('form-zone').classList.add('hidden');
+  document.getElementById('step-type').classList.remove('hidden');
+  window.scrollTo({top:0,behavior:'smooth'});
+};
+const val = (id) => document.getElementById(id).value.trim();
+const showError = (msg) => {
+  const b = document.getElementById('error-banner');
+  b.textContent = '❌ ' + msg;
+  b.style.display = 'block';
+  window.scrollTo({top:0,behavior:'smooth'});
+  setTimeout(()=>b.style.display='none', 5000);
+};
+const soumettre = async () => {
+  if (!val('personne_nom') || !val('personne_prenom')) return showError('Le nom et le prénom de la personne concernée sont obligatoires.');
+  if (!val('type_copie')) return showError('Veuillez choisir le type de copie.');
+  if (!val('demandeur_nom') || !val('demandeur_prenom')) return showError('Le nom et le prénom du demandeur sont obligatoires.');
+  if (!val('demandeur_tel')) return showError('Le téléphone du demandeur est obligatoire.');
+  const btn = document.querySelector('#form-zone .btn-primary');
+  btn.disabled = true; btn.textContent = '⏳ Envoi en cours...';
+  try {
+    const data = await apiCall('/copies', 'POST', {
+      type_acte: typeActe,
+      personne_nom: val('personne_nom'), personne_prenom: val('personne_prenom'),
+      date_evenement: val('date_evenement'), numero_acte: val('numero_acte'),
+      demandeur_nom: val('demandeur_nom'), demandeur_prenom: val('demandeur_prenom'), demandeur_lien: val('demandeur_lien'),
+      demandeur_tel: val('demandeur_tel'), demandeur_email: val('demandeur_email'),
+      type_copie: val('type_copie'), nombre_exemplaires: parseInt(val('nombre_exemplaires'))||1,
+      motif: val('motif'), notes: val('notes'),
+      mairie_id: mairieId
+    });
+    document.getElementById('form-zone').classList.add('hidden');
+    document.getElementById('success').style.display = 'block';
+    document.getElementById('success-ref').textContent = data.copie.reference;
+    window.scrollTo({top:0,behavior:'smooth'});
+  } catch (err) {
+    showError(err.message);
+    btn.disabled = false; btn.textContent = '✓ Envoyer ma demande';
+  }
+};
+</script>
+</body>
+</html>
