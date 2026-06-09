@@ -218,6 +218,11 @@ body.dark .hero{background:linear-gradient(135deg,#0a1a0f 0%,#1a3d24 100%)}
     <p style="font-size:.85rem;color:var(--gris);margin-bottom:1rem">Déclarez un décès en ligne, puis présentez-vous à la mairie avec les documents pour finaliser.</p>
     <a id="lien-deces" href="deces.html" class="btn btn-primary" style="text-decoration:none;display:inline-flex">🕊️ Déclarer un décès</a>
   </div>
+  <div class="card" style="margin-bottom:1.5rem;background:linear-gradient(135deg,var(--vert-pale),#fff);border:2px solid var(--vert-clair)">
+    <div class="card-title">📄 Demande de copie d'acte</div>
+    <p style="font-size:.85rem;color:var(--gris);margin-bottom:1rem">Besoin d'une copie ou d'un extrait d'un acte de naissance, de mariage ou de décès ? Faites votre demande en ligne.</p>
+    <a id="lien-copie" href="copie.html" class="btn btn-primary" style="text-decoration:none;display:inline-flex">📄 Demander une copie d'acte</a>
+  </div>
   <div class="card" style="margin-bottom:1.5rem">
     <div class="card-title">🔍 Retrouver mon rendez-vous</div>
     <p style="font-size:.85rem;color:var(--gris);margin-bottom:1rem">Vous avez déjà un rendez-vous ? Entrez votre référence pour consulter les détails.</p>
@@ -312,6 +317,7 @@ body.dark .hero{background:linear-gradient(135deg,#0a1a0f 0%,#1a3d24 100%)}
 <a href="mariages-admin.html" class="btn btn-secondary" style="text-decoration:none">💍 Gérer les mariages</a>
 <a href="naissances-admin.html" class="btn btn-secondary" style="text-decoration:none">📋 Gérer les naissances</a>
 <a href="deces-admin.html" class="btn btn-secondary" style="text-decoration:none">🕊️ Gérer les décès</a>
+<a href="copies-admin.html" class="btn btn-secondary" style="text-decoration:none">📄 Gérer les copies</a>
   </div>
   <div class="stats">
     <div class="stat-card blue"><div class="stat-v" id="s-total">0</div><div class="stat-l">Total cette semaine</div></div>
@@ -515,6 +521,8 @@ const lienMariage=document.getElementById('lien-mariage');
   if(lienNaissance)lienNaissance.href=`naissance.html?mairie=${slug}`;
    const lienDeces=document.getElementById('lien-deces');
   if(lienDeces)lienDeces.href=`deces.html?mairie=${slug}`;
+  const lienCopie=document.getElementById('lien-copie');
+  if(lienCopie)lienCopie.href=`copie.html?mairie=${slug}`;
   try{
     const mairie=await apiCall(`/mairies/${slug}`);
     document.getElementById('app-name').textContent=mairie.nom;
