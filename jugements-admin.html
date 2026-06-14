@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gestion des jugements supplétifs — DigiMairie</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;0,900;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --vert:#1a6b3c;--vert-mid:#238a4e;--vert-clair:#d6f0e0;--vert-pale:#edf7f1;
+  --or:#e8a020;--or-clair:#fef3d0;
+  --noir:#0d1f14;--sable:#f7f2ea;--blanc:#fff;--gris:#6b7280;--gris-clair:#f3f4f6;
+  --rouge:#c0392b;--vert-ok:#16a34a;--bleu:#3b82f6;--violet:#8b5cf6;--texte:#1a2e1e;
+  --radius:14px;--shadow:0 4px 24px rgba(0,0,0,.08);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--sable);color:var(--texte);min-height:100vh}
+header{background:linear-gradient(135deg,var(--noir),#1a3d24);padding:0 2rem;height:68px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 16px rgba(0,0,0,.2);position:sticky;top:0;z-index:100}
+.logo{display:flex;align-items:center;gap:12px}
+.logo-mark{width:40px;height:40px;background:var(--or);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem}
+.logo h1{font-family:'Fraunces',serif;font-size:1.15rem;color:#fff;line-height:1.1}
+.logo p{font-size:.66rem;color:rgba(255,255,255,.6);letter-spacing:.06em;text-transform:uppercase}
+.header-links{display:flex;gap:1rem;align-items:center}
+.header-links a{color:rgba(255,255,255,.8);text-decoration:none;font-size:.84rem;font-weight:600}
+.header-links a:hover{color:var(--or)}
+main{max-width:1100px;margin:0 auto;padding:2rem 1.5rem}
+.page-title{font-family:'Fraunces',serif;font-size:1.7rem;margin-bottom:.3rem}
+.page-sub{color:var(--gris);font-size:.9rem;margin-bottom:2rem}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2rem}
+@media(max-width:680px){.stats{grid-template-columns:1fr 1fr}}
+.stat-card{background:#fff;border-radius:var(--radius);padding:1.2rem;box-shadow:var(--shadow);border-left:4px solid transparent}
+.stat-card.gold{border-color:var(--or)}.stat-card.blue{border-color:var(--bleu)}.stat-card.violet{border-color:var(--violet)}.stat-card.green{border-color:var(--vert-ok)}
+.stat-v{font-family:'Fraunces',serif;font-size:2rem;font-weight:900;line-height:1}
+.stat-l{font-size:.74rem;color:var(--gris);margin-top:.3rem}
+.toolbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.8rem;margin-bottom:1rem}
+.filter-bar{display:flex;gap:.45rem;flex-wrap:wrap}
+.f-btn{padding:.35rem .9rem;border-radius:999px;border:1.5px solid #d1d5db;background:#fff;font-size:.78rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}
+.f-btn.active{background:var(--vert);border-color:var(--vert);color:#fff}
+.card{background:#fff;border-radius:var(--radius);padding:1.3rem;box-shadow:var(--shadow)}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:.7rem;font-weight:700;color:var(--gris);text-transform:uppercase;letter-spacing:.05em;padding:.7rem 1rem;background:var(--gris-clair);border-bottom:2px solid #e5e7eb}
+th:first-child{border-radius:8px 0 0 0}th:last-child{border-radius:0 8px 0 0}
+td{padding:.85rem 1rem;border-bottom:1px solid #f3f4f6;font-size:.84rem;vertical-align:middle}
+tr:hover td{background:#fafdf9}
+.enfant{font-weight:700}
+.enfant small{display:block;font-weight:400;color:var(--gris);font-size:.72rem;margin-top:.15rem}
+.badge{display:inline-block;padding:.2rem .65rem;border-radius:999px;font-size:.7rem;font-weight:700}
+.sexe-m{background:#dbeafe;color:#1e40af}
+.sexe-f{background:#fce7f3;color:#9d174d}
+.st-pre{background:#fef3c7;color:#92400e}
+.st-verif{background:#dbeafe;color:#1e40af}
+.st-tribunal{background:#ede9fe;color:#5b21b6}
+.st-fini{background:#d1fae5;color:#065f46}
+.st-rejete{background:#fee2e2;color:#991b1b}
+.ref-code{background:var(--gris-clair);padding:.13rem .45rem;border-radius:5px;font-size:.74rem;font-family:monospace}
+.btn{padding:.4rem .85rem;border-radius:8px;border:none;cursor:pointer;font-family:inherit;font-size:.76rem;font-weight:700;transition:all .2s}
+.btn-voir{background:#fff;color:var(--texte);border:1.5px solid #d1d5db}
+.btn-voir:hover{border-color:var(--vert);color:var(--vert)}
+.empty{text-align:center;padding:3rem;color:var(--gris)}
+.empty .ei{font-size:3rem;margin-bottom:.7rem}
+.loading{text-align:center;padding:3rem;color:var(--gris)}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center;padding:1rem}
+.overlay.open{display:flex}
+.modal{background:#fff;border-radius:18px;padding:1.8rem;max-width:560px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.25)}
+.modal h3{font-family:'Fraunces',serif;font-size:1.3rem;margin-bottom:.3rem}
+.modal-ref{color:var(--gris);font-size:.82rem;margin-bottom:1.2rem}
+.detail-section{margin-bottom:1.2rem}
+.detail-section h4{font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;color:var(--vert);margin-bottom:.6rem;padding-bottom:.3rem;border-bottom:1px solid var(--vert-pale)}
+.d-row{display:flex;justify-content:space-between;padding:.3rem 0;font-size:.85rem;gap:1rem}
+.d-row span:first-child{color:var(--gris)}
+.d-row span:last-child{font-weight:600;text-align:right}
+.statut-actions{margin-top:1.3rem}
+.statut-actions label{font-size:.78rem;font-weight:700;display:block;margin-bottom:.5rem;margin-top:.6rem}
+.statut-actions select,.statut-actions input{width:100%;padding:.6rem .8rem;border:1.5px solid #d1d5db;border-radius:9px;font-family:inherit;font-size:.88rem}
+.m-actions{display:flex;justify-content:flex-end;gap:.7rem;margin-top:1rem}
+.btn-primary{background:var(--vert);color:#fff;padding:.6rem 1.4rem;border-radius:9px;border:none;font-weight:700;cursor:pointer;font-family:inherit;font-size:.85rem}
+.btn-secondary{background:#fff;color:var(--texte);border:1.5px solid #d1d5db;padding:.6rem 1.4rem;border-radius:9px;font-weight:700;cursor:pointer;font-family:inherit;font-size:.85rem}
+.login-overlay{position:fixed;inset:0;background:linear-gradient(135deg,var(--noir),#1a3d24);z-index:300;display:flex;align-items:center;justify-content:center;padding:1rem}
+.login-box{background:#fff;border-radius:20px;padding:2.5rem;max-width:400px;width:100%;box-shadow:0 24px 64px rgba(0,0,0,.3);text-align:center}
+.login-box .logo-mark{margin:0 auto 1rem}
+.login-box h2{font-family:'Fraunces',serif;font-size:1.4rem;margin-bottom:.4rem}
+.login-box p{color:var(--gris);font-size:.85rem;margin-bottom:1.4rem}
+.login-box input{width:100%;padding:.75rem 1rem;border:1.5px solid #d1d5db;border-radius:10px;font-size:.9rem;font-family:inherit;margin-bottom:.9rem}
+.login-box button{width:100%;padding:.8rem;background:var(--vert);color:#fff;border:none;border-radius:10px;font-size:.92rem;font-weight:700;cursor:pointer;font-family:inherit}
+.login-error{color:var(--rouge);font-size:.82rem;margin-bottom:.9rem;display:none}
+</style>
+</head>
+<body>
+<div class="login-overlay" id="login-overlay">
+  <div class="login-box">
+    <div class="logo-mark">🔐</div>
+    <h2>Connexion Agent</h2>
+    <p>Gestion des jugements supplétifs</p>
+    <div class="login-error" id="login-error">❌ Identifiants incorrects</div>
+    <input type="email" id="login-email" placeholder="Email" onkeypress="if(event.key==='Enter')document.getElementById('login-pwd').focus()">
+    <input type="password" id="login-pwd" placeholder="Mot de passe" onkeypress="if(event.key==='Enter')seConnecter()">
+    <button onclick="seConnecter()">Se connecter</button>
+  </div>
+</div>
+<div id="dashboard" style="display:none">
+  <header>
+    <div class="logo">
+      <div class="logo-mark">⚖️</div>
+      <div><h1>Jugements supplétifs</h1><p>Espace agent</p></div>
+    </div>
+    <div class="header-links">
+      <a href="index.html">← Rendez-vous</a>
+      <a href="#" onclick="deconnexion();return false">Déconnexion</a>
+    </div>
+  </header>
+  <main>
+    <h2 class="page-title">Demandes de jugement supplétif</h2>
+    <p class="page-sub">Suivez les demandes et faites évoluer leur statut jusqu'à la transcription de l'acte.</p>
+    <div class="stats">
+      <div class="stat-card gold"><div class="stat-v" id="s-total">0</div><div class="stat-l">Total demandes</div></div>
+      <div class="stat-card blue"><div class="stat-v" id="s-depose">0</div><div class="stat-l">⏳ Déposées</div></div>
+      <div class="stat-card violet"><div class="stat-v" id="s-tribunal">0</div><div class="stat-l">🏛️ Au tribunal</div></div>
+      <div class="stat-card green"><div class="stat-v" id="s-transcrit">0</div><div class="stat-l">✅ Transcrites</div></div>
+    </div>
+    <div class="toolbar">
+      <div class="filter-bar">
+        <button class="f-btn active" onclick="filtrer('tous',this)">Toutes</button>
+        <button class="f-btn" onclick="filtrer('depose',this)">⏳ Déposées</button>
+        <button class="f-btn" onclick="filtrer('en-traitement',this)">📑 En traitement</button>
+        <button class="f-btn" onclick="filtrer('transmis-tribunal',this)">🏛️ Transmises</button>
+        <button class="f-btn" onclick="filtrer('jugement-rendu',this)">⚖️ Jugement rendu</button>
+        <button class="f-btn" onclick="filtrer('transcrit',this)">✅ Transcrites</button>
+      </div>
+    </div>
+    <div class="card">
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr><th>Réf.</th><th>Personne concernée</th><th>Sexe</th><th>Né(e) le</th><th>Statut</th><th>Action</th></tr>
+          </thead>
+          <tbody id="tbody">
+            <tr><td colspan="6"><div class="loading">⏳ Chargement...</div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+<div class="overlay" id="overlay" onclick="if(event.target===this)fermerModal()">
+  <div class="modal" id="modal-content"></div>
+</div>
+<script>
+const API_URL = 'https://mairie-rdv-backend.onrender.com/api';
+let authToken = localStorage.getItem('token') || null;
+let tousJugements = [];
+let filtreActuel = 'tous';
+const apiCall = async (endpoint, method='GET', body=null, token=null) => {
+  const headers = {'Content-Type':'application/json'};
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+  const options = {method, headers};
+  if (body) options.body = JSON.stringify(body);
+  const response = await fetch(`${API_URL}${endpoint}`, options);
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.message || 'Erreur serveur');
+  return data;
+};
+const seConnecter = async () => {
+  const email = document.getElementById('login-email').value.trim();
+  const pwd = document.getElementById('login-pwd').value.trim();
+  const errEl = document.getElementById('login-error');
+  if (!email || !pwd) { errEl.style.display='block'; errEl.textContent='❌ Remplissez tous les champs'; return; }
+  try {
+    const data = await apiCall('/auth/connecter', 'POST', { email, mot_de_passe: pwd });
+    authToken = data.token;
+    localStorage.setItem('token', data.token);
+    afficherDashboard();
+  } catch (err) {
+    errEl.style.display = 'block';
+    errEl.textContent = '❌ ' + err.message;
+  }
+};
+const deconnexion = () => { authToken = null; localStorage.removeItem('token'); location.reload(); };
+const afficherDashboard = () => {
+  document.getElementById('login-overlay').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'block';
+  chargerJugements();
+};
+if (authToken) afficherDashboard();
+const labelsStatut = { 'depose':'Déposé', 'en-traitement':'En traitement', 'transmis-tribunal':'Transmis au tribunal', 'jugement-rendu':'Jugement rendu', 'transcrit':'Transcrit', 'rejete':'Rejeté' };
+const classeStatut = { 'depose':'st-pre', 'en-traitement':'st-verif', 'transmis-tribunal':'st-tribunal', 'jugement-rendu':'st-tribunal', 'transcrit':'st-fini', 'rejete':'st-rejete' };
+const chargerJugements = async () => {
+  const tbody = document.getElementById('tbody');
+  try {
+    tousJugements = await apiCall('/jugements', 'GET', null, authToken);
+    document.getElementById('s-total').textContent = tousJugements.length;
+    document.getElementById('s-depose').textContent = tousJugements.filter(j => j.statut==='depose').length;
+    document.getElementById('s-tribunal').textContent = tousJugements.filter(j => j.statut==='transmis-tribunal' || j.statut==='jugement-rendu').length;
+    document.getElementById('s-transcrit').textContent = tousJugements.filter(j => j.statut==='transcrit').length;
+    afficherTableau();
+  } catch (err) {
+    if (err.message.includes('oken')) {
+      authToken = null; localStorage.removeItem('token');
+      tbody.innerHTML = '<tr><td colspan="6"><div class="empty">🔐 Session expirée — rechargez la page</div></td></tr>';
+    } else {
+      tbody.innerHTML = `<tr><td colspan="6"><div class="empty">❌ ${err.message}</div></td></tr>`;
+    }
+  }
+};
+const afficherTableau = () => {
+  const tbody = document.getElementById('tbody');
+  let liste = [...tousJugements];
+  if (filtreActuel !== 'tous') liste = liste.filter(j => j.statut === filtreActuel);
+  if (!liste.length) {
+    tbody.innerHTML = `<tr><td colspan="6"><div class="empty"><div class="ei">⚖️</div>Aucune demande</div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = '';
+  liste.forEach(j => {
+    const dateNaiss = j.personne_date_naissance ? new Date(j.personne_date_naissance).toLocaleDateString('fr-FR') : '—';
+    const sexeBadge = j.personne_sexe === 'Masculin' ? '<span class="badge sexe-m">♂ Masculin</span>'
+      : j.personne_sexe === 'Féminin' ? '<span class="badge sexe-f">♀ Féminin</span>' : '—';
+    const stClasse = classeStatut[j.statut] || 'st-pre';
+    const stLabel = labelsStatut[j.statut] || j.statut;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><span class="ref-code">${j.reference}</span></td>
+      <td><div class="enfant">${j.personne_prenom} ${j.personne_nom}<small>Demandeur : ${j.demandeur_prenom} ${j.demandeur_nom}</small></div></td>
+      <td>${sexeBadge}</td>
+      <td>${dateNaiss}</td>
+      <td><span class="badge ${stClasse}">${stLabel}</span></td>
+      <td><button class="btn btn-voir" onclick="voirDetail(${j.id})">Voir</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+};
+const filtrer = (statut, btn) => {
+  filtreActuel = statut;
+  document.querySelectorAll('.f-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  afficherTableau();
+};
+const voirDetail = (id) => {
+  const j = tousJugements.find(x => x.id === id);
+  if (!j) return;
+  const fmt = (d) => d ? new Date(d).toLocaleDateString('fr-FR') : '—';
+  const optionsStatut = ['depose','en-traitement','transmis-tribunal','jugement-rendu','transcrit','rejete'];
+  const elements = (j.temoins || j.pieces_fournies || j.contexte)
+    ? `<div class="detail-section">
+         <h4>Éléments du dossier</h4>
+         ${j.temoins ? `<div class="d-row"><span>Témoins</span><span style="text-align:left;font-weight:400;white-space:pre-line">${j.temoins}</span></div>` : ''}
+         ${j.pieces_fournies ? `<div class="d-row"><span>Pièces</span><span style="text-align:left;font-weight:400;white-space:pre-line">${j.pieces_fournies}</span></div>` : ''}
+         ${j.contexte ? `<div class="d-row"><span>Contexte</span><span style="text-align:left;font-weight:400;white-space:pre-line">${j.contexte}</span></div>` : ''}
+       </div>`
+    : '';
+  document.getElementById('modal-content').innerHTML = `
+    <h3>⚖️ Jugement supplétif</h3>
+    <div class="modal-ref">Référence : <strong>${j.reference}</strong></div>
+    <div class="detail-section">
+      <h4>La personne concernée</h4>
+      <div class="d-row"><span>Nom complet</span><span>${j.personne_prenom} ${j.personne_nom}</span></div>
+      <div class="d-row"><span>Sexe</span><span>${j.personne_sexe || '—'}</span></div>
+      <div class="d-row"><span>Naissance présumée</span><span>${fmt(j.personne_date_naissance)}</span></div>
+      <div class="d-row"><span>Lieu présumé</span><span>${j.personne_lieu_naissance || '—'}</span></div>
+      <div class="d-row"><span>Père</span><span>${j.personne_pere || '—'}</span></div>
+      <div class="d-row"><span>Mère</span><span>${j.personne_mere || '—'}</span></div>
+    </div>
+    <div class="detail-section">
+      <h4>Le demandeur</h4>
+      <div class="d-row"><span>Nom complet</span><span>${j.demandeur_prenom} ${j.demandeur_nom}</span></div>
+      <div class="d-row"><span>Lien</span><span>${j.demandeur_lien || '—'}</span></div>
+      <div class="d-row"><span>Téléphone</span><span>${j.demandeur_tel || '—'}</span></div>
+      <div class="d-row"><span>Email</span><span>${j.demandeur_email || '—'}</span></div>
+    </div>
+    ${elements}
+    ${j.numero_jugement ? `<div class="detail-section"><h4>Jugement</h4><div class="d-row"><span>N° de jugement</span><span>${j.numero_jugement}</span></div></div>` : ''}
+    ${j.notes ? `<div class="detail-section"><h4>Remarques</h4><div class="d-row"><span></span><span style="text-align:left;font-weight:400">${j.notes}</span></div></div>` : ''}
+    <div class="statut-actions">
+      <label>Faire évoluer le statut</label>
+      <select id="select-statut">
+        ${optionsStatut.map(s => `<option value="${s}" ${j.statut===s?'selected':''}>${labelsStatut[s]}</option>`).join('')}
+      </select>
+      <label>N° de jugement <span style="font-weight:400;color:var(--gris)">(quand le tribunal a statué)</span></label>
+      <input type="text" id="input-numjug" value="${j.numero_jugement || ''}" placeholder="Ex. 2026/...">
+    </div>
+    <div class="m-actions">
+      <button class="btn-secondary" onclick="fermerModal()">Fermer</button>
+      <button class="btn-primary" onclick="majStatut(${j.id})">✓ Enregistrer</button>
+    </div>
+  `;
+  document.getElementById('overlay').classList.add('open');
+};
+const majStatut = async (id) => {
+  const statut = document.getElementById('select-statut').value;
+  const numero_jugement = document.getElementById('input-numjug').value.trim();
+  try {
+    await apiCall(`/jugements/${id}/statut`, 'PUT', { statut, numero_jugement }, authToken);
+    fermerModal();
+    chargerJugements();
+  } catch (err) {
+    alert('❌ Erreur : ' + err.message);
+  }
+};
+const fermerModal = () => document.getElementById('overlay').classList.remove('open');
+</script>
+<div style="text-align:center;padding:1rem;font-size:.75rem;color:#9ca3af;font-family:sans-serif">© 2026 IANNIV BIEN — DigiMairie — Tous droits réservés</div>
+</body>
+</html>
