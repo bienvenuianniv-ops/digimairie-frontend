@@ -398,13 +398,17 @@ function applyLang(){const t=curT;document.getElementById('h-badge').textContent
 
 function applyConfig(){const nom=document.getElementById('cfg-nom').value||'DigiMairie',langName=document.getElementById('cfg-lang').value,color=document.getElementById('cfg-color').value,logo=document.getElementById('cfg-logo').value||'🏛️';document.getElementById('app-name').textContent=nom;document.getElementById('app-logo').textContent=logo;document.documentElement.style.setProperty('--vert',color);if(langName)document.getElementById('local-btn').textContent=langName;}
 
-let selSvc='',selectedService=null,payMode='guichet';
+let selSvc='',selectedService=null,payMode='guichet',mairieId=null;
 
 const renderServices=async()=>{
   const g=document.getElementById('svc-grid');
   g.innerHTML='<div style="text-align:center;padding:2rem;color:var(--gris)">⏳ Chargement des services...</div>';
   try{
-    const services=await apiCall('/services');
+    if(mairieId===null){
+      const sl=new URLSearchParams(window.location.search).get('mairie');
+      if(sl){try{const m=await apiCall(`/mairies/${sl}`);mairieId=m.id;}catch(e){}}
+    }
+    const services=await apiCall(mairieId?`/services?mairie_id=${mairieId}`:'/services');
     const icons={'État civil':'📋','Urbanisme':'🏗️','Aide sociale':'🤝','Permis divers':'📄','Logement':'🏠','Légalisation':'📜'};
     g.innerHTML='';
     services.forEach(s=>{const icon=icons[s.nom]||'📋';const d=document.createElement('div');d.className='svc-card'+(selectedService?.id===s.id?' sel':'');d.innerHTML=`<div class="svc-icon">${icon}</div><div class="svc-name">${s.nom}</div><div class="svc-desc">${s.description}</div><div class="svc-local">${s.duree_min} min</div>`;d.onclick=()=>{selectedService=s;selSvc=s.nom;renderServices();document.getElementById('btn1').disabled=false;};g.appendChild(d);});
