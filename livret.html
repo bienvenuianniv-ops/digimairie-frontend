@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Livret de famille — DigiMairie</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;0,900;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --vert:#1a6b3c;--vert-mid:#238a4e;--vert-clair:#d6f0e0;--vert-pale:#edf7f1;
+  --or:#e8a020;--or-clair:#fef3d0;
+  --noir:#0d1f14;--sable:#f7f2ea;--blanc:#fff;--gris:#6b7280;--gris-clair:#f3f4f6;
+  --rouge:#c0392b;--vert-ok:#16a34a;--bleu:#3b82f6;--texte:#1a2e1e;
+  --radius:14px;--shadow:0 4px 24px rgba(0,0,0,.08);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--sable);color:var(--texte);min-height:100vh}
+nav{background:var(--vert);padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{display:flex;align-items:center;gap:.75rem;text-decoration:none}
+.nav-logo-mark{width:38px;height:38px;background:var(--or);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem}
+.nav-logo-text{font-family:'Fraunces',serif;font-size:1.2rem;color:#fff;font-weight:700}
+.nav-links a{color:rgba(255,255,255,.85);text-decoration:none;font-size:.9rem;font-weight:500;margin-left:1.5rem}
+.nav-links a:hover{color:var(--or)}
+.hero{background:linear-gradient(135deg,var(--noir),#1a3d24);padding:2.6rem 2rem;text-align:center}
+.hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(232,160,32,.15);border:1px solid rgba(232,160,32,.3);color:var(--or);font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:.35rem 1rem;border-radius:999px;margin-bottom:1rem}
+.hero h1{font-family:'Fraunces',serif;font-size:clamp(1.6rem,4vw,2.2rem);color:#fff;margin-bottom:.5rem}
+.hero p{color:rgba(255,255,255,.7);font-size:.95rem;max-width:540px;margin:0 auto}
+.main{max-width:760px;margin:0 auto;padding:2.2rem 1.2rem}
+.info-banner{background:var(--or-clair);border-left:4px solid var(--or);border-radius:10px;padding:1rem 1.3rem;font-size:.86rem;color:#7a4a00;margin-bottom:1.6rem;line-height:1.55}
+.info-banner strong{display:block;margin-bottom:.3rem;font-size:.92rem}
+.card{background:#fff;border-radius:var(--radius);padding:1.8rem;box-shadow:var(--shadow);margin-bottom:1.4rem}
+.card-title{font-family:'Fraunces',serif;font-size:1.12rem;margin-bottom:.4rem;display:flex;align-items:center;gap:.5rem}
+.card-hint{font-size:.78rem;color:var(--gris);margin-bottom:1.2rem}
+.optional-tag{font-size:.68rem;background:var(--gris-clair);color:var(--gris);padding:.1rem .5rem;border-radius:999px;font-weight:600;margin-left:.4rem}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:560px){.form-grid{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:.35rem}
+.field.full{grid-column:1/-1}
+label{font-size:.78rem;font-weight:700;color:var(--texte)}
+input,select,textarea{padding:.65rem .85rem;border:1.5px solid #d1d5db;border-radius:9px;font-size:.88rem;font-family:inherit;color:var(--texte);transition:border-color .2s;background:#fff}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--vert);box-shadow:0 0 0 3px rgba(26,107,60,.1)}
+textarea{resize:vertical;min-height:70px}
+.btn{padding:.8rem 2rem;border-radius:10px;border:none;cursor:pointer;font-family:inherit;font-size:.92rem;font-weight:700;transition:all .2s;display:inline-flex;align-items:center;gap:.5rem}
+.btn-primary{background:var(--vert);color:#fff;width:100%;justify-content:center}
+.btn-primary:hover{background:var(--vert-mid)}
+.btn-primary:disabled{background:#9ca3af;cursor:not-allowed}
+.error-banner{background:#fee2e2;border:1px solid #fca5a5;border-radius:10px;padding:.9rem 1.2rem;color:var(--rouge);font-size:.85rem;margin-bottom:1rem;display:none}
+.success{background:#fff;border-radius:var(--radius);padding:2.5rem 2rem;text-align:center;box-shadow:var(--shadow);display:none}
+.success-icon{width:80px;height:80px;border-radius:50%;background:var(--vert-clair);border:3px solid var(--vert-ok);display:flex;align-items:center;justify-content:center;font-size:2.4rem;margin:0 auto 1.3rem}
+.success h2{font-family:'Fraunces',serif;font-size:1.7rem;color:var(--vert);margin-bottom:.6rem}
+.success p{color:var(--gris);font-size:.9rem;line-height:1.6;margin-bottom:1rem}
+.ref-box{background:var(--vert);color:#fff;border-radius:10px;padding:.7rem 1.8rem;display:inline-block;margin:.6rem 0 1.2rem;font-family:'Fraunces',serif;font-weight:900;letter-spacing:.1em;font-size:1.2rem}
+.docs-box{background:var(--or-clair);border-left:4px solid var(--or);border-radius:8px;padding:1rem 1.2rem;font-size:.85rem;color:#7a4a00;text-align:left;margin-top:1rem}
+.docs-box strong{display:block;margin-bottom:.5rem}
+.docs-box ul{margin:0;padding-left:1.2rem}
+.docs-box li{margin:.25rem 0}
+</style>
+</head>
+<body>
+<nav>
+  <a href="accueil.html" class="nav-logo">
+    <div class="nav-logo-mark">🏛️</div>
+    <span class="nav-logo-text">DigiMairie</span>
+  </a>
+  <div class="nav-links">
+    <a href="accueil.html">Accueil</a>
+    <a href="index.html">Rendez-vous</a>
+  </div>
+</nav>
+<div class="hero">
+  <div class="hero-badge">📗 État civil</div>
+  <h1>Demande de livret de famille</h1>
+  <p>Demandez votre livret de famille ou un duplicata. La mairie le prépare, puis vous le retirez au guichet.</p>
+</div>
+<div class="main">
+  <div class="info-banner">
+    <strong>ℹ️ Comment ça fonctionne</strong>
+    Le livret de famille consigne les événements de votre foyer (mariage, naissances…). Après cette demande, vous recevrez une référence ; vous serez informé(e) dès que le livret sera prêt à être retiré à la mairie.
+  </div>
+  <div id="error-banner" class="error-banner"></div>
+  <div id="form-zone">
+    <div class="card">
+      <div class="card-title">🗂️ Type de demande</div>
+      <div class="form-grid">
+        <div class="field full"><label>Type *</label>
+          <select id="type_demande">
+            <option value="">-- Choisir --</option>
+            <option value="Premier livret">Premier livret</option>
+            <option value="Duplicata">Duplicata (perte / détérioration)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">🙋 Le titulaire (demandeur)</div>
+      <div class="card-hint">La personne qui demande le livret.</div>
+      <div class="form-grid">
+        <div class="field"><label>Nom *</label><input type="text" id="titulaire_nom"></div>
+        <div class="field"><label>Prénom *</label><input type="text" id="titulaire_prenom"></div>
+        <div class="field"><label>Téléphone *</label><input type="tel" id="titulaire_tel" placeholder="+221 ..."></div>
+        <div class="field"><label>Email <span class="optional-tag">optionnel</span></label><input type="email" id="titulaire_email"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">💍 Le foyer <span class="optional-tag">si marié·e</span></div>
+      <div class="card-hint">Informations sur le conjoint et l'acte de mariage, si applicable.</div>
+      <div class="form-grid">
+        <div class="field"><label>Nom du conjoint</label><input type="text" id="conjoint_nom"></div>
+        <div class="field"><label>Prénom du conjoint</label><input type="text" id="conjoint_prenom"></div>
+        <div class="field full"><label>Réf. de l'acte de mariage</label><input type="text" id="reference_acte_mariage" placeholder="Si disponible"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">📝 Précisions <span class="optional-tag">optionnel</span></div>
+      <div class="form-grid">
+        <div class="field full"><label>Motif <span class="optional-tag">surtout pour un duplicata</span></label><input type="text" id="motif" placeholder="Ex. perte, vol, détérioration..."></div>
+        <div class="field full"><label>Remarques</label><textarea id="notes" placeholder="Informations utiles pour l'agent..."></textarea></div>
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="soumettre()">✓ Envoyer la demande</button>
+  </div>
+  <div id="success" class="success">
+    <div class="success-icon">✅</div>
+    <h2>Demande enregistrée !</h2>
+    <p>Votre demande de livret de famille a bien été enregistrée. Conservez votre référence :</p>
+    <div class="ref-box" id="success-ref">LIV-XXXXXX</div>
+    <div class="docs-box">
+      <strong>📋 La suite :</strong>
+      <ul>
+        <li>La mairie prépare votre livret de famille.</li>
+        <li>Vous êtes informé(e) dès qu'il est prêt.</li>
+        <li>Vous le retirez au guichet avec une pièce d'identité.</li>
+      </ul>
+    </div>
+    <br>
+    <button class="btn btn-primary" onclick="location.reload()" style="margin-top:.5rem">+ Nouvelle demande</button>
+  </div>
+</div>
+<script>
+const API_URL = 'https://mairie-rdv-backend.onrender.com/api';
+const apiCall = async (endpoint, method='GET', body=null) => {
+  const headers = {'Content-Type':'application/json'};
+  const options = {method, headers};
+  if (body) options.body = JSON.stringify(body);
+  const response = await fetch(`${API_URL}${endpoint}`, options);
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.message || 'Erreur serveur');
+  return data;
+};
+const params = new URLSearchParams(window.location.search);
+const mairieSlug = params.get('mairie');
+let mairieId = null;
+(async () => {
+  if (mairieSlug) {
+    try { const m = await apiCall(`/mairies/${mairieSlug}`); mairieId = m.id; }
+    catch (e) { console.log('Mairie non trouvée'); }
+  }
+})();
+const val = (id) => document.getElementById(id).value.trim();
+const showError = (msg) => {
+  const b = document.getElementById('error-banner');
+  b.textContent = '❌ ' + msg;
+  b.style.display = 'block';
+  window.scrollTo({top:0,behavior:'smooth'});
+  setTimeout(()=>b.style.display='none', 5000);
+};
+const soumettre = async () => {
+  if (!val('type_demande')) return showError('Veuillez choisir le type de demande.');
+  if (!val('titulaire_nom') || !val('titulaire_prenom')) return showError('Le nom et le prénom du titulaire sont obligatoires.');
+  if (!val('titulaire_tel')) return showError('Le téléphone du titulaire est obligatoire.');
+  const btn = document.querySelector('#form-zone .btn-primary');
+  btn.disabled = true; btn.textContent = '⏳ Envoi en cours...';
+  try {
+    const data = await apiCall('/livrets', 'POST', {
+      type_demande: val('type_demande'),
+      titulaire_nom: val('titulaire_nom'), titulaire_prenom: val('titulaire_prenom'),
+      titulaire_tel: val('titulaire_tel'), titulaire_email: val('titulaire_email'),
+      conjoint_nom: val('conjoint_nom'), conjoint_prenom: val('conjoint_prenom'),
+      reference_acte_mariage: val('reference_acte_mariage'),
+      motif: val('motif'), notes: val('notes'),
+      mairie_id: mairieId
+    });
+    document.getElementById('form-zone').style.display = 'none';
+    document.getElementById('success').style.display = 'block';
+    document.getElementById('success-ref').textContent = data.livret.reference;
+    window.scrollTo({top:0,behavior:'smooth'});
+  } catch (err) {
+    showError(err.message);
+    btn.disabled = false; btn.textContent = '✓ Envoyer la demande';
+  }
+};
+</script>
+<div style="text-align:center;padding:1rem;font-size:.75rem;color:#9ca3af;font-family:sans-serif">© 2026 IANNIV BIEN — DigiMairie — Tous droits réservés</div>
+</body>
+</html>
