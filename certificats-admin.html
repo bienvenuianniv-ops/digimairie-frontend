@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gestion des certificats — DigiMairie</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;0,900;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --vert:#1a6b3c;--vert-mid:#238a4e;--vert-clair:#d6f0e0;--vert-pale:#edf7f1;
+  --or:#e8a020;--or-clair:#fef3d0;
+  --noir:#0d1f14;--sable:#f7f2ea;--blanc:#fff;--gris:#6b7280;--gris-clair:#f3f4f6;
+  --rouge:#c0392b;--vert-ok:#16a34a;--bleu:#3b82f6;--violet:#8b5cf6;--texte:#1a2e1e;
+  --radius:14px;--shadow:0 4px 24px rgba(0,0,0,.08);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--sable);color:var(--texte);min-height:100vh}
+header{background:linear-gradient(135deg,var(--noir),#1a3d24);padding:0 2rem;height:68px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 16px rgba(0,0,0,.2);position:sticky;top:0;z-index:100}
+.logo{display:flex;align-items:center;gap:12px}
+.logo-mark{width:40px;height:40px;background:var(--or);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem}
+.logo h1{font-family:'Fraunces',serif;font-size:1.15rem;color:#fff;line-height:1.1}
+.logo p{font-size:.66rem;color:rgba(255,255,255,.6);letter-spacing:.06em;text-transform:uppercase}
+.header-links{display:flex;gap:1rem;align-items:center}
+.header-links a{color:rgba(255,255,255,.8);text-decoration:none;font-size:.84rem;font-weight:600}
+.header-links a:hover{color:var(--or)}
+main{max-width:1100px;margin:0 auto;padding:2rem 1.5rem}
+.page-title{font-family:'Fraunces',serif;font-size:1.7rem;margin-bottom:.3rem}
+.page-sub{color:var(--gris);font-size:.9rem;margin-bottom:2rem}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2rem}
+@media(max-width:680px){.stats{grid-template-columns:1fr 1fr}}
+.stat-card{background:#fff;border-radius:var(--radius);padding:1.2rem;box-shadow:var(--shadow);border-left:4px solid transparent}
+.stat-card.gold{border-color:var(--or)}.stat-card.blue{border-color:var(--bleu)}.stat-card.violet{border-color:var(--violet)}.stat-card.green{border-color:var(--vert-ok)}
+.stat-v{font-family:'Fraunces',serif;font-size:2rem;font-weight:900;line-height:1}
+.stat-l{font-size:.74rem;color:var(--gris);margin-top:.3rem}
+.toolbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.8rem;margin-bottom:1rem}
+.filter-bar{display:flex;gap:.45rem;flex-wrap:wrap}
+.f-btn{padding:.35rem .9rem;border-radius:999px;border:1.5px solid #d1d5db;background:#fff;font-size:.78rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}
+.f-btn.active{background:var(--vert);border-color:var(--vert);color:#fff}
+.card{background:#fff;border-radius:var(--radius);padding:1.3rem;box-shadow:var(--shadow)}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:.7rem;font-weight:700;color:var(--gris);text-transform:uppercase;letter-spacing:.05em;padding:.7rem 1rem;background:var(--gris-clair);border-bottom:2px solid #e5e7eb}
+th:first-child{border-radius:8px 0 0 0}th:last-child{border-radius:0 8px 0 0}
+td{padding:.85rem 1rem;border-bottom:1px solid #f3f4f6;font-size:.84rem;vertical-align:middle}
+tr:hover td{background:#fafdf9}
+.enfant{font-weight:700}
+.badge{display:inline-block;padding:.2rem .65rem;border-radius:999px;font-size:.7rem;font-weight:700}
+.type-badge{background:#e0e7ff;color:#3730a3}
+.st-pre{background:#fef3c7;color:#92400e}
+.st-verif{background:#dbeafe;color:#1e40af}
+.st-fini{background:#d1fae5;color:#065f46}
+.st-rejete{background:#fee2e2;color:#991b1b}
+.ref-code{background:var(--gris-clair);padding:.13rem .45rem;border-radius:5px;font-size:.74rem;font-family:monospace}
+.btn{padding:.4rem .85rem;border-radius:8px;border:none;cursor:pointer;font-family:inherit;font-size:.76rem;font-weight:700;transition:all .2s}
+.btn-voir{background:#fff;color:var(--texte);border:1.5px solid #d1d5db}
+.btn-voir:hover{border-color:var(--vert);color:var(--vert)}
+.empty{text-align:center;padding:3rem;color:var(--gris)}
+.empty .ei{font-size:3rem;margin-bottom:.7rem}
+.loading{text-align:center;padding:3rem;color:var(--gris)}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center;padding:1rem}
+.overlay.open{display:flex}
+.modal{background:#fff;border-radius:18px;padding:1.8rem;max-width:560px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.25)}
+.modal h3{font-family:'Fraunces',serif;font-size:1.3rem;margin-bottom:.3rem}
+.modal-ref{color:var(--gris);font-size:.82rem;margin-bottom:1.2rem}
+.detail-section{margin-bottom:1.2rem}
+.detail-section h4{font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;color:var(--vert);margin-bottom:.6rem;padding-bottom:.3rem;border-bottom:1px solid var(--vert-pale)}
+.d-row{display:flex;justify-content:space-between;padding:.3rem 0;font-size:.85rem;gap:1rem}
+.d-row span:first-child{color:var(--gris)}
+.d-row span:last-child{font-weight:600;text-align:right}
+.statut-actions{margin-top:1.3rem}
+.statut-actions label{font-size:.78rem;font-weight:700;display:block;margin-bottom:.5rem;margin-top:.6rem}
+.statut-actions select,.statut-actions input{width:100%;padding:.6rem .8rem;border:1.5px solid #d1d5db;border-radius:9px;font-family:inherit;font-size:.88rem}
+.m-actions{display:flex;justify-content:flex-end;gap:.7rem;margin-top:1rem}
+.btn-primary{background:var(--vert);color:#fff;padding:.6rem 1.4rem;border-radius:9px;border:none;font-weight:700;cursor:pointer;font-family:inherit;font-size:.85rem}
+.btn-secondary{background:#fff;color:var(--texte);border:1.5px solid #d1d5db;padding:.6rem 1.4rem;border-radius:9px;font-weight:700;cursor:pointer;font-family:inherit;font-size:.85rem}
+.login-overlay{position:fixed;inset:0;background:linear-gradient(135deg,var(--noir),#1a3d24);z-index:300;display:flex;align-items:center;justify-content:center;padding:1rem}
+.login-box{background:#fff;border-radius:20px;padding:2.5rem;max-width:400px;width:100%;box-shadow:0 24px 64px rgba(0,0,0,.3);text-align:center}
+.login-box .logo-mark{margin:0 auto 1rem}
+.login-box h2{font-family:'Fraunces',serif;font-size:1.4rem;margin-bottom:.4rem}
+.login-box p{color:var(--gris);font-size:.85rem;margin-bottom:1.4rem}
+.login-box input{width:100%;padding:.75rem 1rem;border:1.5px solid #d1d5db;border-radius:10px;font-size:.9rem;font-family:inherit;margin-bottom:.9rem}
+.login-box button{width:100%;padding:.8rem;background:var(--vert);color:#fff;border:none;border-radius:10px;font-size:.92rem;font-weight:700;cursor:pointer;font-family:inherit}
+.login-error{color:var(--rouge);font-size:.82rem;margin-bottom:.9rem;display:none}
+</style>
+</head>
+<body>
+<div class="login-overlay" id="login-overlay">
+  <div class="login-box">
+    <div class="logo-mark">🔐</div>
+    <h2>Connexion Agent</h2>
+    <p>Gestion des certificats</p>
+    <div class="login-error" id="login-error">❌ Identifiants incorrects</div>
+    <input type="email" id="login-email" placeholder="Email" onkeypress="if(event.key==='Enter')document.getElementById('login-pwd').focus()">
+    <input type="password" id="login-pwd" placeholder="Mot de passe" onkeypress="if(event.key==='Enter')seConnecter()">
+    <button onclick="seConnecter()">Se connecter</button>
+  </div>
+</div>
+<div id="dashboard" style="display:none">
+  <header>
+    <div class="logo">
+      <div class="logo-mark">📑</div>
+      <div><h1>Certificats</h1><p>Espace agent</p></div>
+    </div>
+    <div class="header-links">
+      <a href="index.html">← Rendez-vous</a>
+      <a href="#" onclick="deconnexion();return false">Déconnexion</a>
+    </div>
+  </header>
+  <main>
+    <h2 class="page-title">Demandes de certificat</h2>
+    <p class="page-sub">Traitez les demandes et délivrez les certificats aux citoyens.</p>
+    <div class="stats">
+      <div class="stat-card gold"><div class="stat-v" id="s-total">0</div><div class="stat-l">Total demandes</div></div>
+      <div class="stat-card blue"><div class="stat-v" id="s-depose">0</div><div class="stat-l">⏳ Déposées</div></div>
+      <div class="stat-card violet"><div class="stat-v" id="s-traitement">0</div><div class="stat-l">📑 En traitement</div></div>
+      <div class="stat-card green"><div class="stat-v" id="s-delivre">0</div><div class="stat-l">✅ Délivrés</div></div>
+    </div>
+    <div class="toolbar">
+      <div class="filter-bar">
+        <button class="f-btn active" onclick="filtrer('tous',this)">Tous</button>
+        <button class="f-btn" onclick="filtrer('depose',this)">⏳ Déposées</button>
+        <button class="f-btn" onclick="filtrer('en-traitement',this)">📑 En traitement</button>
+        <button class="f-btn" onclick="filtrer('delivre',this)">✅ Délivrés</button>
+      </div>
+    </div>
+    <div class="card">
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr><th>Réf.</th><th>Bénéficiaire</th><th>Type</th><th>Statut</th><th>Action</th></tr>
+          </thead>
+          <tbody id="tbody">
+            <tr><td colspan="5"><div class="loading">⏳ Chargement...</div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+<div class="overlay" id="overlay" onclick="if(event.target===this)fermerModal()">
+  <div class="modal" id="modal-content"></div>
+</div>
+<script>
+const API_URL = 'https://mairie-rdv-backend.onrender.com/api';
+let authToken = localStorage.getItem('token') || null;
+let tousCertificats = [];
+let filtreActuel = 'tous';
+const apiCall = async (endpoint, method='GET', body=null, token=null) => {
+  const headers = {'Content-Type':'application/json'};
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+  const options = {method, headers};
+  if (body) options.body = JSON.stringify(body);
+  const response = await fetch(`${API_URL}${endpoint}`, options);
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.message || 'Erreur serveur');
+  return data;
+};
+const seConnecter = async () => {
+  const email = document.getElementById('login-email').value.trim();
+  const pwd = document.getElementById('login-pwd').value.trim();
+  const errEl = document.getElementById('login-error');
+  if (!email || !pwd) { errEl.style.display='block'; errEl.textContent='❌ Remplissez tous les champs'; return; }
+  try {
+    const data = await apiCall('/auth/connecter', 'POST', { email, mot_de_passe: pwd });
+    authToken = data.token;
+    localStorage.setItem('token', data.token);
+    afficherDashboard();
+  } catch (err) {
+    errEl.style.display = 'block';
+    errEl.textContent = '❌ ' + err.message;
+  }
+};
+const deconnexion = () => { authToken = null; localStorage.removeItem('token'); location.reload(); };
+const afficherDashboard = () => {
+  document.getElementById('login-overlay').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'block';
+  chargerCertificats();
+};
+if (authToken) afficherDashboard();
+const labelsStatut = { 'depose':'Déposé', 'en-traitement':'En traitement', 'delivre':'Délivré', 'rejete':'Rejeté' };
+const classeStatut = { 'depose':'st-pre', 'en-traitement':'st-verif', 'delivre':'st-fini', 'rejete':'st-rejete' };
+const chargerCertificats = async () => {
+  const tbody = document.getElementById('tbody');
+  try {
+    tousCertificats = await apiCall('/certificats', 'GET', null, authToken);
+    document.getElementById('s-total').textContent = tousCertificats.length;
+    document.getElementById('s-depose').textContent = tousCertificats.filter(c => c.statut==='depose').length;
+    document.getElementById('s-traitement').textContent = tousCertificats.filter(c => c.statut==='en-traitement').length;
+    document.getElementById('s-delivre').textContent = tousCertificats.filter(c => c.statut==='delivre').length;
+    afficherTableau();
+  } catch (err) {
+    if (err.message.includes('oken')) {
+      authToken = null; localStorage.removeItem('token');
+      tbody.innerHTML = '<tr><td colspan="5"><div class="empty">🔐 Session expirée — rechargez la page</div></td></tr>';
+    } else {
+      tbody.innerHTML = `<tr><td colspan="5"><div class="empty">❌ ${err.message}</div></td></tr>`;
+    }
+  }
+};
+const afficherTableau = () => {
+  const tbody = document.getElementById('tbody');
+  let liste = [...tousCertificats];
+  if (filtreActuel !== 'tous') liste = liste.filter(c => c.statut === filtreActuel);
+  if (!liste.length) {
+    tbody.innerHTML = `<tr><td colspan="5"><div class="empty"><div class="ei">📑</div>Aucune demande</div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = '';
+  liste.forEach(c => {
+    const stClasse = classeStatut[c.statut] || 'st-pre';
+    const stLabel = labelsStatut[c.statut] || c.statut;
+    const type = c.type_certificat ? `<span class="badge type-badge">${c.type_certificat}</span>` : '—';
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><span class="ref-code">${c.reference}</span></td>
+      <td><div class="enfant">${c.beneficiaire_prenom} ${c.beneficiaire_nom}</div></td>
+      <td>${type}</td>
+      <td><span class="badge ${stClasse}">${stLabel}</span></td>
+      <td><button class="btn btn-voir" onclick="voirDetail(${c.id})">Voir</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+};
+const filtrer = (statut, btn) => {
+  filtreActuel = statut;
+  document.querySelectorAll('.f-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  afficherTableau();
+};
+const voirDetail = (id) => {
+  const c = tousCertificats.find(x => x.id === id);
+  if (!c) return;
+  const fmt = (d) => d ? new Date(d).toLocaleDateString('fr-FR') : '—';
+  const optionsStatut = ['depose','en-traitement','delivre','rejete'];
+  document.getElementById('modal-content').innerHTML = `
+    <h3>📑 ${c.type_certificat || 'Certificat'}</h3>
+    <div class="modal-ref">Référence : <strong>${c.reference}</strong></div>
+    <div class="detail-section">
+      <h4>Le bénéficiaire</h4>
+      <div class="d-row"><span>Nom complet</span><span>${c.beneficiaire_prenom} ${c.beneficiaire_nom}</span></div>
+      <div class="d-row"><span>Naissance</span><span>${fmt(c.beneficiaire_date_naissance)} ${c.beneficiaire_lieu_naissance ? '— '+c.beneficiaire_lieu_naissance : ''}</span></div>
+      <div class="d-row"><span>Adresse</span><span>${c.beneficiaire_adresse || '—'}</span></div>
+      <div class="d-row"><span>Profession</span><span>${c.beneficiaire_profession || '—'}</span></div>
+      <div class="d-row"><span>Nationalité</span><span>${c.beneficiaire_nationalite || '—'}</span></div>
+    </div>
+    <div class="detail-section">
+      <h4>Contact</h4>
+      <div class="d-row"><span>Téléphone</span><span>${c.demandeur_tel || '—'}</span></div>
+      <div class="d-row"><span>Email</span><span>${c.demandeur_email || '—'}</span></div>
+      <div class="d-row"><span>Demandé par</span><span>${c.demandeur_lien || '—'}</span></div>
+    </div>
+    ${(c.usage_motif || c.pieces_fournies) ? `<div class="detail-section">
+      <h4>Détails</h4>
+      ${c.usage_motif ? `<div class="d-row"><span>Usage</span><span style="text-align:left;font-weight:400">${c.usage_motif}</span></div>` : ''}
+      ${c.pieces_fournies ? `<div class="d-row"><span>Pièces</span><span style="text-align:left;font-weight:400;white-space:pre-line">${c.pieces_fournies}</span></div>` : ''}
+    </div>` : ''}
+    ${c.numero_certificat ? `<div class="detail-section"><h4>Délivrance</h4><div class="d-row"><span>N° du certificat</span><span>${c.numero_certificat}</span></div></div>` : ''}
+    ${c.notes ? `<div class="detail-section"><h4>Remarques</h4><div class="d-row"><span></span><span style="text-align:left;font-weight:400">${c.notes}</span></div></div>` : ''}
+    <div class="statut-actions">
+      <label>Faire évoluer le statut</label>
+      <select id="select-statut">
+        ${optionsStatut.map(s => `<option value="${s}" ${c.statut===s?'selected':''}>${labelsStatut[s]}</option>`).join('')}
+      </select>
+      <label>N° du certificat <span style="font-weight:400;color:var(--gris)">(à la délivrance)</span></label>
+      <input type="text" id="input-numcert" value="${c.numero_certificat || ''}" placeholder="Ex. 2026/...">
+    </div>
+    <div class="m-actions">
+      <button class="btn-secondary" onclick="fermerModal()">Fermer</button>
+      <button class="btn-primary" onclick="majStatut(${c.id})">✓ Enregistrer</button>
+    </div>
+  `;
+  document.getElementById('overlay').classList.add('open');
+};
+const majStatut = async (id) => {
+  const statut = document.getElementById('select-statut').value;
+  const numero_certificat = document.getElementById('input-numcert').value.trim();
+  try {
+    await apiCall(`/certificats/${id}/statut`, 'PUT', { statut, numero_certificat }, authToken);
+    fermerModal();
+    chargerCertificats();
+  } catch (err) {
+    alert('❌ Erreur : ' + err.message);
+  }
+};
+const fermerModal = () => document.getElementById('overlay').classList.remove('open');
+</script>
+<div style="text-align:center;padding:1rem;font-size:.75rem;color:#9ca3af;font-family:sans-serif">© 2026 IANNIV BIEN — DigiMairie — Tous droits réservés</div>
+</body>
+</html>
